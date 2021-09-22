@@ -10,12 +10,12 @@ public class cs_PlayerController : MonoBehaviour
     private Rigidbody2D _rbPlayer;
     private SpriteRenderer _srPlayer;
     private Camera _mCamera;
+    public int PlayerLives;
 
     #region Movement
     [SerializeField] private float _defaultMoveSpeed;
     public float MaxMoveSpeed;
     [SerializeField] private float _minMoveSpeed;
-    private float _moveSpeed;
     [SerializeField] private float _defaultDecelarationRate;
     [SerializeField] private float _turnRate;
     [SerializeField] private float _dashMultiplier = 1f;
@@ -29,6 +29,11 @@ public class cs_PlayerController : MonoBehaviour
     #region Shooting
     [SerializeField] private float _defaultFireRate;
     public int PuckCount;
+
+    [SerializeField] private AudioClip _shootSound;
+    [SerializeField] private AudioClip _chargeSound;
+    [SerializeField] private AudioClip _superShotSound;
+
     [SerializeField] private GameObject _prefabDynamicPuck;
     [SerializeField] private GameObject _prefabStaticPuck;
     [SerializeField] private float _shootForce;
@@ -41,7 +46,9 @@ public class cs_PlayerController : MonoBehaviour
     #endregion
 
     #region Actions
-    public static event Action<int, Vector2, List<Vector2>, float> s_ShootPuck;
+    public static event Action<Vector2, float> s_ShootPuck;
+    public static event Action<AudioClip> s_ShootEffects;
+    public static event Action s_PlayerDied;
     #endregion
 
     // Start is called before the first frame update
@@ -51,6 +58,8 @@ public class cs_PlayerController : MonoBehaviour
         _rbPlayer = GetComponent<Rigidbody2D>();
         _srPlayer = GetComponent<SpriteRenderer>();
         _mCamera = Camera.main;
+
+        DisplayPucks(1);
     }
 
     // Update is called once per frame
@@ -65,7 +74,7 @@ public class cs_PlayerController : MonoBehaviour
             _dHorMove = Input.GetAxis("Horizontal");
         }
 
-        if (Input.GetAxis("Vertial") != 0)
+        if (Input.GetAxis("Vertical") != 0)
         {
             _dVerMove = Input.GetAxis("Vertical");
         }
@@ -115,7 +124,7 @@ public class cs_PlayerController : MonoBehaviour
 
             if (_rbPlayer.velocity.magnitude < _minMoveSpeed)
             {
-                _rbPlayer.AddForce(deltaMove * ((1 - (speed / MaxMoveSpeed))) * (_moveSpeed * 50 * Time.deltaTime));
+                _rbPlayer.AddForce(deltaMove * (1 - (speed / MaxMoveSpeed)) * (_defaultMoveSpeed * 2 * 50 * Time.deltaTime));
                 Vector2 _debugPos = new Vector2(transform.position.x + (_rbPlayer.velocity.x * speed), transform.position.y + (_rbPlayer.velocity.y * speed));
                 Debug.DrawLine(transform.position, _debugPos, Color.red);
             }
@@ -163,39 +172,74 @@ public class cs_PlayerController : MonoBehaviour
 
     private void PlayerShootPuck()
     {
-        s_ShootPuck?.Invoke(1, _puckSpawn.position, _shootDirections, (_shootForce * _chargeMultiplier));
+        foreach (GameObject _staticPuck in _displayedStaticPucks)
+        {
+            Destroy(_staticPuck);
+        }
+
+        DisplayPucks(_shootDirections.Count);
+
+        foreach (Vector2 _shootDirection in _shootDirections)
+        {
+            GameObject _puck = Instantiate(_prefabDynamicPuck, _puckSpawn.position, Quaternion.identity);
+            _shootForce = _shootForce * _chargeMultiplier;
+            _puck.GetComponent<cs_Puck>().ShootPuck(_shootDirection, (_shootForce * _chargeMultiplier));
+        }
+
+        PuckCount -=  _displayedStaticPucks.Count;
+        Debug.Log(PuckCount);
+        _shootForce = 50f;
+        s_ShootEffects?.Invoke(_shootSound);
+
+        DisplayPucks(1);
+    }
+
+    private void PlayerHit()
+    {
+        if(PlayerLives > 0)
+        {
+            PlayerLives--;
+        }
+        else
+        {
+            s_PlayerDied?.Invoke();
+        }
     }
 
     private void DisplayPucks(int _pucks)
     {
+        
         if (_puckSpawn.childCount > 0 && _displayedStaticPucks.Count > 0)
         {
-            foreach (GameObject puck in _displayedStaticPucks)
+            foreach (GameObject _puck in _displayedStaticPucks)
             {
-                Destroy(puck);
+                Destroy(_puck);
             }
         }
 
         _displayedStaticPucks = new List<GameObject>();
+        _shootDirections = new List<Vector2>();
         float _puckInterval = 0.2f;
 
         if (_pucks > 1)
         {
-            float _length = _puckInterval * _pucks; //* pucks;
+            float _length = _puckInterval * _pucks;
             float _startPos = (-_length / 2) + (_puckInterval / 2);
 
             for (int i = 0; i < _pucks; i++)
             {
-                GameObject staticPuck = Instantiate(_prefabStaticPuck, _puckSpawn);
-                staticPuck.transform.localPosition = new Vector2(.05f, _startPos + _puckInterval * i);
-                _displayedStaticPucks.Add(staticPuck);
+                GameObject _staticPuck = Instantiate(_prefabStaticPuck, _puckSpawn);
+                _staticPuck.transform.localPosition = new Vector2(.1f, _startPos + _puckInterval * i);
+                _displayedStaticPucks.Add(_staticPuck);
+                _shootDirections.Add(new Vector2(transform.right.x - (_startPos + _puckInterval * i), transform.right.y).normalized);
             }
         }
         else
         {
-            GameObject staticPuck = Instantiate(_prefabStaticPuck, _puckSpawn);
-            staticPuck.transform.localPosition = new Vector2(.05f, 0);
-            _displayedStaticPucks.Add(staticPuck);
+            GameObject _staticPuck = Instantiate(_prefabStaticPuck, _puckSpawn);
+            _staticPuck.transform.localPosition = new Vector2(.1f, 0);
+            _displayedStaticPucks.Add(_staticPuck);
+            _shootDirections.Add((transform.right).normalized);
         }
     }
 
@@ -204,13 +248,14 @@ public class cs_PlayerController : MonoBehaviour
         PuckCount++;
     }
 
-    private IEnumerator ChargeShot()
+    public IEnumerator ChargeShot()
     {
-        float _time = 0f;
+        s_ShootEffects?.Invoke(_chargeSound);
+        float _time = 0;
 
-        while(_time > 0)
+        while(_time > _chargeTime)
         {
-            _time -= Time.deltaTime;
+            _time += Time.deltaTime;
             _chargeMultiplier = Mathf.Lerp(0.75f, 1.25f, _time / _chargeTime);
             yield return null;
         }
