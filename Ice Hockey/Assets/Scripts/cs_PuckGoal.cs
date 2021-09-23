@@ -52,7 +52,6 @@ public class cs_PuckGoal : MonoBehaviour
         {
             _puck.transform.localPosition = new Vector2(_startPos + (_loopInt * _intervalDistance), - 0.5f);
             _loopInt++;
-            Debug.Log(_puck.transform.position);
         }
     }
     

@@ -192,11 +192,24 @@ public class cs_PlayerController : MonoBehaviour
             _puck.GetComponent<cs_Puck>().ShootPuck(_shootDirection, (_shootForce * _chargeMultiplier));
         }
 
+
         PuckCount -=  _displayedStaticPucks.Count;
         _shootForce = 50f;
         s_ShootEffects?.Invoke(_shootSound);
+        s_UpdatePlayerPucks?.Invoke(PuckCount);
 
-        DisplayPucks(1);
+        if(PuckCount > 0)
+        {
+            DisplayPucks(1);
+            Debug.Log("Show puck");
+        }
+        else
+        {
+            foreach (GameObject _staticPuck in _displayedStaticPucks)
+            {
+                Destroy(_staticPuck);
+            }
+        }
     }
 
     private void PlayerHit(int _damage)
@@ -256,6 +269,7 @@ public class cs_PlayerController : MonoBehaviour
     {
         PuckCount += _pucks;
         s_UpdatePlayerPucks?.Invoke(PuckCount);
+        DisplayPucks(1);
     }
 
     public IEnumerator ChargeShot()
