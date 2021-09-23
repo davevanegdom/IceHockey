@@ -193,7 +193,6 @@ public class cs_PlayerController : MonoBehaviour
         }
 
         PuckCount -=  _displayedStaticPucks.Count;
-        Debug.Log(PuckCount);
         _shootForce = 50f;
         s_ShootEffects?.Invoke(_shootSound);
 

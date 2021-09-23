@@ -2,10 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class cs_UIManager : MonoBehaviour
 {
+    [SerializeField] private TMPro.TextMeshProUGUI _waveText;
+    [SerializeField] private TMPro.TextMeshProUGUI _progressText;
+    [SerializeField] private Slider _progressbar;
 
+    [SerializeField] private Transform _heartsPanelParent;
+    [SerializeField] private GameObject _playerHeartIcon;
+    private int _savedLiveIndex;
+    [SerializeField] private TMPro.TextMeshProUGUI _playerPuckCount;
+
+    [SerializeField] private TMPro.TextMeshPro _leftGoalText;
+    [SerializeField] private TMPro.TextMeshPro _rightGoalText;
 
     // Start is called before the first frame update
     void Start()
@@ -15,25 +26,54 @@ public class cs_UIManager : MonoBehaviour
 
     private void UpdateWaveIndex(int _waveIndex)
     {
-
+        _waveText.text = "WAVE " + _waveIndex;
     }
 
-    private void UpdateWaveProgress(float progress)
+    private void UpdateWaveProgress(float _progress)
     {
-
+        _progressText.text = (_progress * 100).ToString() + "%";
+        _progressbar.value = _progress;
     }
 
     private void UpdatePlayerPuckCount(int _puckCount)
     {
-
+        _playerPuckCount.text = _puckCount.ToString();
     }
 
-    private void UpdateCollectedPuckCount(int _puckCount)
+    private void UpdateCollectedPuckCount(int _puckCount, int _identifier)
+    {
+        if(_identifier == 0)
+        {
+            //_leftGoalText.text = _puckCount.ToString();
+        }
+        else
+        {
+            //_rightGoalText.text = _puckCount.ToString();
+        }
+    }
+
+    private void UpdatePlayerLives(int _playerLives)
+    {
+        if(_heartsPanelParent.childCount > 0)
+        {
+            foreach (Transform _heart in _heartsPanelParent)
+            {
+                Destroy(_heart.gameObject);
+            }
+        }
+
+        for (int i = 0; i < _playerLives; i++)
+        {
+            Instantiate(_playerHeartIcon, _heartsPanelParent);
+        }
+    }
+
+    private void UpdateTimer(string _time)
     {
 
     }
 
-    private void UpdateTimer(string _time)
+    private void ResetUI()
     {
 
     }

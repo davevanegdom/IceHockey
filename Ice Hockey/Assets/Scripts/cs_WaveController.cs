@@ -22,7 +22,7 @@ public class cs_WaveController : MonoBehaviour
         _waveManager = GetComponent<cs_WaveManager>();
     }
 
-    private void SpawnEnemies(int _newWaveIndex, int _enemiesCount, int _newWaveTime)
+    public void SpawnEnemies(int _newWaveIndex, int _enemiesCount, int _newWaveTime)
     {
         _waveIndex = _newWaveIndex;
         _enemiesToSpawn = _enemiesCount;
@@ -48,20 +48,21 @@ public class cs_WaveController : MonoBehaviour
     {
         _enemiesKilled++;
         int _enemiesToKill = _waveManager.Waves[_waveManager.WaveIndex].NumberOfEnemies.AmountOfEnemies;
-        float _progress = _enemiesToKill / _enemiesKilled;
+        float _progress = (float)_enemiesKilled / (float)_enemiesToSpawn;
+        s_SetWaveProgress?.Invoke(_progress);
 
 
-        if (_enemiesToKill == _enemiesToSpawn)
+        if (_enemiesKilled == _enemiesToSpawn)
         {
             s_WaveEnded?.Invoke(_waveIndex);
             Debug.Log("Wave Ended");
+            StopAllCoroutines();
         }
     }
 
     //Get a point on an edge collider
     Vector2 enemySpawnPosition()
     {
-        Debug.Log("Rayyyyy");
         RaycastHit2D _hit = Physics2D.Raycast(Vector2.zero, new Vector2((UnityEngine.Random.Range(-1f, 1f)), (UnityEngine.Random.Range(-1f, 1f))), 100f, SpawnLayer);
 
         if (_hit.collider == null)
@@ -94,6 +95,7 @@ public class cs_WaveController : MonoBehaviour
             yield return null;
         }
 
+        //s_WaveEnded?.Invoke(_waveIndex);
         StopAllCoroutines();
     }
 
@@ -114,10 +116,7 @@ public class cs_WaveController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.T))
         {
-            s_WaveEnded?.Invoke(_waveIndex);
-
-            Debug.Log("Wave Ended");
-            StopAllCoroutines();
+            WaveProgress();
         }
     }
 }

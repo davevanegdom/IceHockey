@@ -11,15 +11,19 @@ public class cs_WaveManager : MonoBehaviour
 
     public static event Action<int> s_SetWaveIndex;
     public static event Action<int, int, int> s_SpawnWave;
-    
+    public static event Action<int> s_GameManagerAware;
+
+    private void Start()
+    {
+        WaveIndex = 0;
+    }
 
     private void WaveStart(int _currentWave)
     {
-        if (WaveIndex + 1 < Waves.Count)
+        WaveIndex = _currentWave;
+        if(WaveIndex >= 0)
         {
-            WaveIndex = _currentWave;
             s_SpawnWave?.Invoke(WaveIndex, Waves[WaveIndex].NumberOfEnemies.AmountOfEnemies, Waves[WaveIndex].TargetTime.WaveTime);
-
             SetWaveIndex(WaveIndex + 1);
         }
         else
@@ -30,8 +34,9 @@ public class cs_WaveManager : MonoBehaviour
 
     private void WaveFinished(int _finishedWaveIndex)
     {
-        StartCoroutine(WaveInterval());
         WaveIndex++;
+        StartCoroutine(WaveInterval());
+
     }
 
     public void SetWaveIndex(int _displayIndex)
@@ -43,7 +48,7 @@ public class cs_WaveManager : MonoBehaviour
     {
         float _time = _waveInterval;
 
-        while(_time > 0)
+        while (_time > 0)
         {
             _time -= Time.deltaTime;
             yield return null;
@@ -82,7 +87,7 @@ public class cs_WaveManager : MonoBehaviour
 
     private void OnDisable()
     {
-        cs_WaveController.s_WaveEnded += WaveFinished;
+        cs_WaveController.s_WaveEnded -= WaveFinished;
         cs_GameManager.s_StartWaves -= WaveStart;
     }
 }

@@ -199,7 +199,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8aa534ab5741391449de1d932bdd7570, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemyLives: 2
+  _enemyLives: 1
   _shootAbility: 0
   _canShoot: 0
   _moveSpeed: 10

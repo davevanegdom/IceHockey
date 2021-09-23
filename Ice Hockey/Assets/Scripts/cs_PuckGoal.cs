@@ -5,11 +5,13 @@ using System;
 
 public class cs_PuckGoal : MonoBehaviour
 {
+    public int Identifier;
     [SerializeField] private GameObject _staticPuckPrefab;
     public int CollectedPucks = 0;
     [SerializeField] private int _maxCollectablePucks;
 
-    public static event Action<int> s_SetCollectedPucks;
+
+    public static event Action<int, int> s_SetCollectedPucks;
     public static event Action<int> s_PlayerCollectPucks;
 
     // Start is called before the first frame update
@@ -20,7 +22,7 @@ public class cs_PuckGoal : MonoBehaviour
 
     private void UpdateCollectedCount(int _collectedPucks)
     {
-        s_SetCollectedPucks?.Invoke(_collectedPucks);
+        s_SetCollectedPucks?.Invoke(_collectedPucks, Identifier);
         DisplayPucks(_collectedPucks);
     }
 
@@ -29,10 +31,10 @@ public class cs_PuckGoal : MonoBehaviour
         if (transform.childCount > 0)
         {
             //Clear all previous stored pucks
-            foreach (Transform child in transform)
+            foreach (Transform _child in transform)
             {
              
-                Destroy(child.gameObject);
+                Destroy(_child.gameObject);
             }
         }
 
@@ -41,15 +43,16 @@ public class cs_PuckGoal : MonoBehaviour
             Instantiate(_staticPuckPrefab, transform);
         }
 
-        float intervalDistance = 0.15f;
-        float length = intervalDistance * (_collectedPucks - 1);
-        float startPos = transform.position.y - length * 1.5f;
-        int loopInt = 0;
+        float _intervalDistance = 0.15f;
+        float _length = _intervalDistance * (_collectedPucks - 1);
+        float _startPos = transform.position.y - _length * 1.5f;
+        int _loopInt = 0;
 
-        foreach (Transform puck in transform)
+        foreach (Transform _puck in transform)
         {
-            puck.transform.position = new Vector2((transform.position.x + transform.position.normalized.x), startPos + (loopInt * intervalDistance));
-            loopInt++;
+            _puck.transform.localPosition = new Vector2(_startPos + (_loopInt * _intervalDistance), - 0.5f);
+            _loopInt++;
+            Debug.Log(_puck.transform.position);
         }
     }
     
@@ -82,18 +85,18 @@ public class cs_PuckGoal : MonoBehaviour
         }
     }*/
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D _collision)
     {
-        if (collision.gameObject.tag == "Player")
+        if (_collision.gameObject.tag == "Player")
         {
             PlayerPickUpPucks(CollectedPucks);
         }
 
-        if (collision.gameObject.tag == "Puck" && CollectedPucks < _maxCollectablePucks)
+        if (_collision.gameObject.tag == "Puck" && CollectedPucks < _maxCollectablePucks)
         {
             CollectedPucks++;
             UpdateCollectedCount(CollectedPucks);
-            Destroy(collision.gameObject);
+            Destroy(_collision.gameObject);
         }
     }
 

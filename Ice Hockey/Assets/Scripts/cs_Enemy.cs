@@ -48,8 +48,6 @@ public class cs_Enemy : MonoBehaviour
         _srEnemy = GetComponent<SpriteRenderer>();
         _srReaction = GetComponentInChildren<SpriteRenderer>();
         //_srReaction.enabled = false;
-        _cEnemy.isTrigger = true;
-
         InvokeRepeating("ChaseOffset", 1f, 3f);
     }
 
@@ -93,7 +91,7 @@ public class cs_Enemy : MonoBehaviour
         else
         {
             s_EnemyDied?.Invoke();
-            Destroy(gameObject);
+            Destroy(gameObject, 0.1f);
         }
         
     }
@@ -142,18 +140,19 @@ public class cs_Enemy : MonoBehaviour
     {
         if(collision.gameObject.tag == "Puck")
         {
-            TakeDamage(1);
+            if(collision.gameObject.GetComponent<Rigidbody2D>().velocity.magnitude > 2f)
+            {
+                TakeDamage(1);
+            }
         }
     }
 
-    private void OnCollisionExit(Collision collision)
-    {
-        if(collision.gameObject.tag == "ArenaColliders")
-        {
-            _cEnemy.isTrigger = false;
-            
-        }
+    //private void OnCollisionExit(Collision collision)
+    //{
+    //    if(collision.gameObject.tag == "ArenaColliders")
+    //    {
+    //        _cEnemy.isTrigger = false;
+    //    }
 
-        Debug.Log("Enable Collider");
-    }
+    //}
 }
