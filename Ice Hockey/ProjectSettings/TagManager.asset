@@ -8,6 +8,8 @@ TagManager:
   - UIManager
   - AudioManager
   - WaveManager
+  - Puck
+  - ArenaColliders
   layers:
   - Default
   - TransparentFX

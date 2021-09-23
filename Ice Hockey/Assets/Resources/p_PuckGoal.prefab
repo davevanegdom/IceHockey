@@ -155,3 +155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6be21443442d8884bba3e2a230b037ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _staticPuckPrefab: {fileID: 6101373807279073598, guid: 47002485a31f36c48852af4c42dced83,
+    type: 3}
+  CollectedPucks: 0
+  _maxCollectablePucks: 5

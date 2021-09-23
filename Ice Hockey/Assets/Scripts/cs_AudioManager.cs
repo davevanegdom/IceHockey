@@ -34,10 +34,12 @@ public class cs_AudioManager : MonoBehaviour
     {
         cs_Puck.s_pickUpSound += PlayAudioClip;
         cs_PlayerController.s_ShootEffects += PlayAudioClip;
+        cs_PlayerController.s_PlayerEffects += PlayAudioClip;
     }
     private void OnDisable()
     {
         cs_Puck.s_pickUpSound -= PlayAudioClip;
         cs_PlayerController.s_ShootEffects -= PlayAudioClip;
+        cs_PlayerController.s_PlayerEffects -= PlayAudioClip;
     }
 }

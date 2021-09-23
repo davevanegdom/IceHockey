@@ -98,7 +98,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 0.5
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -134,18 +134,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4233edf9a1efd047bc7d8aec9046617, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PlayerLives: 0
+  _playerDeath: {fileID: 8300000, guid: a84380a4ce5568b4c8ac28a83127212d, type: 3}
+  _playerHit: {fileID: 8300000, guid: 58a3181a13b9fae4c94ddf5415ddeb73, type: 3}
   _defaultMoveSpeed: 7
   MaxMoveSpeed: 10
   _minMoveSpeed: 10
   _defaultDecelarationRate: 1.5
   _turnRate: 20
   _dashMultiplier: 150
+  _dashSound: {fileID: 8300000, guid: 99add98d5c259f943a85ff71af4142e8, type: 3}
   _retainMomemtumPercentage: 0.1
   _dashCooldown: 1
   _selectedDashSystem: 0
   _defaultFireRate: 2
   PuckCount: 10
-  _shootSound: {fileID: 0}
+  _shootSound: {fileID: 8300000, guid: 5ae67a14e6d080c4880e3c14756cab07, type: 3}
   _chargeSound: {fileID: 0}
   _superShotSound: {fileID: 0}
   _prefabDynamicPuck: {fileID: 5165462278121099713, guid: 2c42fc71ce9625b4fa244fd4527c7a54,

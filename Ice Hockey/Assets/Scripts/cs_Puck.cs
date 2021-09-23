@@ -6,7 +6,7 @@ using System;
 public class cs_Puck : MonoBehaviour
 {
 
-    public static event Action s_PuckPickedUp;
+    public static event Action<int> s_PuckPickedUp;
     public static event Action<AudioClip> s_pickUpSound;
     [SerializeField] private AudioClip _puckPickUpSound;
 
@@ -69,7 +69,7 @@ public class cs_Puck : MonoBehaviour
 
     private void PickUpPuck()
     {
-        s_PuckPickedUp?.Invoke();
+        s_PuckPickedUp?.Invoke(1);
         s_pickUpSound?.Invoke(_puckPickUpSound);
         Destroy(gameObject);
     }

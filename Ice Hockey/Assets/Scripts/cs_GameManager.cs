@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class cs_GameManager : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class cs_GameManager : MonoBehaviour
     private int _savedLives;
     private int _savedWave;
 
-
+    public static event Action<int> s_StartWaves;
 
     private void Awake()
     {
@@ -46,6 +47,8 @@ public class cs_GameManager : MonoBehaviour
 
         _savedPucks = _playerController.PuckCount;
         _savedLives = _playerController.PlayerLives;
+
+        s_StartWaves?.Invoke(_savedWave);
     }
 
     private void CheckPoint()

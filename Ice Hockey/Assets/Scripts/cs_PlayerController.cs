@@ -11,6 +11,8 @@ public class cs_PlayerController : MonoBehaviour
     private SpriteRenderer _srPlayer;
     private Camera _mCamera;
     public int PlayerLives;
+    [SerializeField] private AudioClip _playerDeath;
+    [SerializeField] private AudioClip _playerHit;
 
     #region Movement
     [SerializeField] private float _defaultMoveSpeed;
@@ -19,9 +21,10 @@ public class cs_PlayerController : MonoBehaviour
     [SerializeField] private float _defaultDecelarationRate;
     [SerializeField] private float _turnRate;
     [SerializeField] private float _dashMultiplier = 1f;
+    [SerializeField] private AudioClip _dashSound;
     [SerializeField] [Range(0, 1)] float _retainMomemtumPercentage;
     [SerializeField] [Range(0, 5)] float _dashCooldown;
-    private bool _canDash;
+    private bool _canDash = true;
     public enum DashSystem {DashInLookDirection, DashInInputDirection}
     [SerializeField] private DashSystem _selectedDashSystem = DashSystem.DashInLookDirection;
     #endregion
@@ -49,6 +52,8 @@ public class cs_PlayerController : MonoBehaviour
     public static event Action<Vector2, float> s_ShootPuck;
     public static event Action<AudioClip> s_ShootEffects;
     public static event Action s_PlayerDied;
+    public static event Action<int> s_UpdatePlayerPucks;
+    public static event Action<AudioClip> s_PlayerEffects;
     #endregion
 
     // Start is called before the first frame update
@@ -166,6 +171,7 @@ public class cs_PlayerController : MonoBehaviour
                 break;
         }
 
+        s_PlayerEffects?.Invoke(_dashSound);
         _canDash = false;
         StartCoroutine(CooldownTimer(_dashCooldown));
     }
@@ -194,16 +200,20 @@ public class cs_PlayerController : MonoBehaviour
         DisplayPucks(1);
     }
 
-    private void PlayerHit()
+    private void PlayerHit(int _damage)
     {
-        if(PlayerLives > 0)
+        if(PlayerLives - _damage > 0)
         {
-            PlayerLives--;
+            PlayerLives -= _damage;
+            s_PlayerEffects?.Invoke(_playerHit);
         }
         else
         {
+            s_PlayerEffects?.Invoke(_playerDeath);
             s_PlayerDied?.Invoke();
         }
+
+        
     }
 
     private void DisplayPucks(int _pucks)
@@ -243,9 +253,10 @@ public class cs_PlayerController : MonoBehaviour
         }
     }
 
-    private void PickUpPuck()
+    private void PickUpPuck(int _pucks)
     {
-        PuckCount++;
+        PuckCount += _pucks;
+        s_UpdatePlayerPucks?.Invoke(PuckCount);
     }
 
     public IEnumerator ChargeShot()
@@ -282,9 +293,11 @@ public class cs_PlayerController : MonoBehaviour
     private void OnEnable()
     {
         cs_Puck.s_PuckPickedUp += PickUpPuck;
+        cs_PuckGoal.s_PlayerCollectPucks += PickUpPuck;
     }
     private void OnDisable()
     {
         cs_Puck.s_PuckPickedUp -= PickUpPuck;
+        cs_PuckGoal.s_PlayerCollectPucks -= PickUpPuck;
     }
 }

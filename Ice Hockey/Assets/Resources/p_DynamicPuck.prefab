@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 5165462278121099723}
   m_Layer: 8
   m_Name: p_DynamicPuck
-  m_TagString: Untagged
+  m_TagString: Puck
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -206,7 +206,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 0.3
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -258,7 +258,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab00fd591790753459e9f350d37d8817, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _puckPickUpSound: {fileID: 0}
+  _puckPickUpSound: {fileID: 8300000, guid: 662eea23441e2d64da34d5b816cc7dfd, type: 3}
   _pickUpRadius: 1
   _puckCollider: {fileID: 5165462278121099717}
   _puckTrigger: {fileID: 5165462278121099722}
