@@ -134,7 +134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4233edf9a1efd047bc7d8aec9046617, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerLives: 0
+  PlayerLives: 5
   _playerDeath: {fileID: 8300000, guid: a84380a4ce5568b4c8ac28a83127212d, type: 3}
   _playerHit: {fileID: 8300000, guid: 58a3181a13b9fae4c94ddf5415ddeb73, type: 3}
   _defaultMoveSpeed: 7

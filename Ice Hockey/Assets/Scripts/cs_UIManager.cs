@@ -49,6 +49,7 @@ public class cs_UIManager : MonoBehaviour
 
     private void UpdatePlayerLives(int _playerLives)
     {
+        Debug.Log(_playerLives);
         if(_heartsPanelParent.childCount > 0)
         {
             foreach (Transform _heart in _heartsPanelParent)
@@ -57,9 +58,13 @@ public class cs_UIManager : MonoBehaviour
             }
         }
 
+        float _interval = 35;
+        float _startX = -_interval * (_playerLives / 2);
+
         for (int i = 0; i < _playerLives; i++)
         {
-            Instantiate(_playerHeartIcon, _heartsPanelParent);
+            GameObject _heartIcon = Instantiate(_playerHeartIcon, _heartsPanelParent);
+            _heartIcon.GetComponent<RectTransform>().anchoredPosition = new Vector2(_startX + _interval * i, 0);
         }
     }
 

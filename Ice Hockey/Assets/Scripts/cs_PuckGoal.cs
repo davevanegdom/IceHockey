@@ -28,13 +28,15 @@ public class cs_PuckGoal : MonoBehaviour
 
     private void DisplayPucks(int _collectedPucks)
     {
-        if (transform.childCount > 0)
+        if (transform.childCount > 1)
         {
             //Clear all previous stored pucks
             foreach (Transform _child in transform)
             {
-             
-                Destroy(_child.gameObject);
+                if(_child.GetSiblingIndex() > 1)
+                {
+                    Destroy(_child.gameObject);
+                }
             }
         }
 
@@ -50,8 +52,11 @@ public class cs_PuckGoal : MonoBehaviour
 
         foreach (Transform _puck in transform)
         {
-            _puck.transform.localPosition = new Vector2(_startPos + (_loopInt * _intervalDistance), - 0.5f);
-            _loopInt++;
+            if(_puck.GetSiblingIndex() > 1)
+            {
+                _puck.transform.localPosition = new Vector2(_startPos + (_loopInt * _intervalDistance), -0.5f);
+                _loopInt++;
+            }
         }
     }
     
@@ -62,29 +67,17 @@ public class cs_PuckGoal : MonoBehaviour
 
         foreach (Transform _staticPuck in transform)
         {
-            Destroy(_staticPuck.gameObject);
+            if(_staticPuck.GetSiblingIndex() > 1)
+            {
+                Destroy(_staticPuck.gameObject);
+            }
         }
-
         CollectedPucks = 0;
         UpdateCollectedCount(CollectedPucks);
     }
 
-    /*
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if(collision.gameObject.tag == "Player")
-        {
-            PlayerPickUpPucks(CollectedPucks);
-        }
-
-        if(collision.gameObject.tag == "Puck" && CollectedPucks < _maxCollectablePucks)
-        {
-            CollectedPucks++;
-            UpdateCollectedCount(CollectedPucks);
-        }
-    }*/
-
-    private void OnCollisionEnter2D(Collision2D _collision)
+    
+    private void OnTriggerEnter2D(Collider2D _collision)
     {
         if (_collision.gameObject.tag == "Player")
         {
@@ -97,6 +90,7 @@ public class cs_PuckGoal : MonoBehaviour
             UpdateCollectedCount(CollectedPucks);
             Destroy(_collision.gameObject);
         }
-    }
+        Debug.Log("Hello");
 
+    }
 }

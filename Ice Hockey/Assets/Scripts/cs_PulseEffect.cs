@@ -17,6 +17,7 @@ public class cs_PulseEffect : MonoBehaviour
     void Start()
     {
         _sr = GetComponent<SpriteRenderer>();
+        _sr.enabled = false;
         _serializedColor = _sr.color;
         IsPlaying = false;
         _startSize = transform.localScale.x;
@@ -27,10 +28,12 @@ public class cs_PulseEffect : MonoBehaviour
     {
         if (IsPlaying)
         {
+            _sr.enabled = true;
             timer();
         }
         else
         {
+            _sr.enabled = false;
             _time = 0f;
         }
     }

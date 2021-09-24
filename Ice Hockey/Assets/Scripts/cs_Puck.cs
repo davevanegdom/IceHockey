@@ -34,7 +34,7 @@ public class cs_Puck : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(!_puckTrigger.enabled && Vector2.Distance(_player.transform.position, transform.position) > _pickUpRadius)
+        if (!_puckTrigger.enabled && Vector2.Distance(_player.transform.position, transform.position) > _pickUpRadius)
         {
             _puckTrigger.enabled = true;
         }

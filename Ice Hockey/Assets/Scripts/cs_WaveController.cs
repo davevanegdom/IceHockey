@@ -13,6 +13,7 @@ public class cs_WaveController : MonoBehaviour
     private int _waveTime;
     private float _timeInterval;
     private int _enemiesKilled;
+    private int _enemiesSpawned;
 
     public static event Action<int> s_WaveEnded;
     public static event Action<float> s_SetWaveProgress;
@@ -30,6 +31,7 @@ public class cs_WaveController : MonoBehaviour
         _waveTime = _newWaveTime;
         _timeInterval = _waveTime / _enemiesToSpawn;
         _enemiesKilled = 0;
+        _enemiesSpawned = 0;
 
         s_ResetUI?.Invoke(_waveIndex + 1, 0, 0, 0);
         SpawnEnemy();
@@ -39,10 +41,15 @@ public class cs_WaveController : MonoBehaviour
 
     private void SpawnEnemy()
     {
-        //Spawn player at the given point
-        Instantiate(EnemyPrefab, enemySpawnPosition(), Quaternion.identity);
-        _timeInterval = _waveTime / _enemiesToSpawn;
-        StartCoroutine(SpawnTimer(_timeInterval));
+        _enemiesSpawned++;
+
+        if(_enemiesSpawned <= _enemiesToSpawn)
+        {
+            //Spawn player at the given point
+            Instantiate(EnemyPrefab, enemySpawnPosition(), Quaternion.identity);
+            _timeInterval = _waveTime / _enemiesToSpawn;
+            StartCoroutine(SpawnTimer(_timeInterval));
+        }
     }
 
     private void WaveProgress()
