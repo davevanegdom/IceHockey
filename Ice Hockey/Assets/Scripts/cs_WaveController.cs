@@ -16,6 +16,7 @@ public class cs_WaveController : MonoBehaviour
 
     public static event Action<int> s_WaveEnded;
     public static event Action<float> s_SetWaveProgress;
+    public static event Action<int, float, int, int> s_ResetUI;
 
     private void Start()
     {
@@ -30,9 +31,9 @@ public class cs_WaveController : MonoBehaviour
         _timeInterval = _waveTime / _enemiesToSpawn;
         _enemiesKilled = 0;
 
+        s_ResetUI?.Invoke(_waveIndex + 1, 0, 0, 0);
         SpawnEnemy();
         StartCoroutine(WaveTimer(_waveTime));
-
         Debug.Log("Wave " + _waveIndex + ": spawn " + _enemiesToSpawn + " enemies over the course of the next " + _waveTime + " seconds");
     }
 

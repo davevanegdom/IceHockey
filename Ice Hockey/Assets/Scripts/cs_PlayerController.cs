@@ -54,6 +54,8 @@ public class cs_PlayerController : MonoBehaviour
     public static event Action s_PlayerDied;
     public static event Action<int> s_UpdatePlayerPucks;
     public static event Action<AudioClip> s_PlayerEffects;
+    public static event Action<int> s_TakeDamage;
+    public static event Action<float> s_ShakeCamera;
     #endregion
 
     // Start is called before the first frame update
@@ -196,12 +198,12 @@ public class cs_PlayerController : MonoBehaviour
         PuckCount -=  _displayedStaticPucks.Count;
         _shootForce = 50f;
         s_ShootEffects?.Invoke(_shootSound);
+        s_ShakeCamera?.Invoke(0.25f);
         s_UpdatePlayerPucks?.Invoke(PuckCount);
 
         if(PuckCount > 0)
         {
             DisplayPucks(1);
-            Debug.Log("Show puck");
         }
         else
         {
@@ -214,13 +216,18 @@ public class cs_PlayerController : MonoBehaviour
 
     private void PlayerHit(int _damage)
     {
+        s_ShakeCamera?.Invoke(0.5f);
+
         if(PlayerLives - _damage > 0)
         {
             PlayerLives -= _damage;
             s_PlayerEffects?.Invoke(_playerHit);
+            s_TakeDamage?.Invoke(PlayerLives);
         }
         else
         {
+            PlayerLives = 0;
+            s_TakeDamage?.Invoke(PlayerLives);
             s_PlayerEffects?.Invoke(_playerDeath);
             s_PlayerDied?.Invoke();
         }

@@ -91,7 +91,7 @@ public class cs_Enemy : MonoBehaviour
         else
         {
             s_EnemyDied?.Invoke();
-            Destroy(gameObject, 0.1f);
+            Destroy(gameObject);
         }
         
     }

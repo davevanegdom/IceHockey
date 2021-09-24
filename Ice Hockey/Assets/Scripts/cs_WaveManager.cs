@@ -61,6 +61,7 @@ public class cs_WaveManager : MonoBehaviour
     [System.Serializable]
     public class Wave
     {
+        public bool IsCheckpointWave;
         public EnemyCount NumberOfEnemies;
         public TargetTime TargetTime;
     }
@@ -82,7 +83,6 @@ public class cs_WaveManager : MonoBehaviour
     {
         cs_WaveController.s_WaveEnded += WaveFinished;
         cs_GameManager.s_StartWaves += WaveStart;
-
     }
 
     private void OnDisable()

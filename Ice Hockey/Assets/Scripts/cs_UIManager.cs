@@ -18,11 +18,6 @@ public class cs_UIManager : MonoBehaviour
     [SerializeField] private TMPro.TextMeshPro _leftGoalText;
     [SerializeField] private TMPro.TextMeshPro _rightGoalText;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
     private void UpdateWaveIndex(int _waveIndex)
     {
@@ -70,12 +65,15 @@ public class cs_UIManager : MonoBehaviour
 
     private void UpdateTimer(string _time)
     {
-
+        
     }
 
-    private void ResetUI()
+    private void ResetUI(int _waveIndex, float _waveProgress, int _playerPucks, int _playerLives)
     {
-
+        UpdateWaveIndex(_waveIndex);
+        UpdateWaveProgress(_waveProgress);
+        UpdatePlayerPuckCount(_playerPucks);
+        UpdatePlayerLives(_playerLives);
     }
 
     private void OnEnable()
@@ -84,6 +82,9 @@ public class cs_UIManager : MonoBehaviour
         cs_WaveController.s_SetWaveProgress += UpdateWaveProgress;
         cs_PuckGoal.s_SetCollectedPucks += UpdateCollectedPuckCount;
         cs_PlayerController.s_UpdatePlayerPucks += UpdatePlayerPuckCount;
+        cs_PlayerController.s_TakeDamage += UpdatePlayerLives;
+        cs_GameManager.s_ResetUI += ResetUI;
+        cs_WaveController.s_ResetUI += ResetUI;
     }
 
     private void OnDisable()
@@ -91,6 +92,9 @@ public class cs_UIManager : MonoBehaviour
         cs_WaveManager.s_SetWaveIndex -= UpdateWaveIndex;
         cs_WaveController.s_SetWaveProgress -= UpdateWaveProgress;
         cs_PuckGoal.s_SetCollectedPucks -= UpdateCollectedPuckCount;
-        cs_PlayerController.s_UpdatePlayerPucks += UpdatePlayerPuckCount;
+        cs_PlayerController.s_UpdatePlayerPucks -= UpdatePlayerPuckCount;
+        cs_PlayerController.s_TakeDamage -= UpdatePlayerLives;
+        cs_GameManager.s_ResetUI -= ResetUI;
+        cs_WaveController.s_ResetUI -= ResetUI;
     }
 }

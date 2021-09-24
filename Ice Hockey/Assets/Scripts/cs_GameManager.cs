@@ -18,6 +18,8 @@ public class cs_GameManager : MonoBehaviour
     private int _savedWave;
 
     public static event Action<int> s_StartWaves;
+    public static event Action<int, float, int, int> s_ResetUI;
+    public static event Action s_SetupCamera;
 
     private void Awake()
     {
@@ -48,7 +50,9 @@ public class cs_GameManager : MonoBehaviour
         _savedPucks = _playerController.PuckCount;
         _savedLives = _playerController.PlayerLives;
 
+        s_SetupCamera?.Invoke();
         s_StartWaves?.Invoke(_savedWave);
+        s_ResetUI?.Invoke(_savedWave + 1, 0f, _savedPucks, _savedLives);
     }
 
     private void CheckPoint()
@@ -61,13 +65,20 @@ public class cs_GameManager : MonoBehaviour
 
     }
 
+    private void ResetUI(int _waveIndex, float _progress, int _playerPucks, int _playerLives)
+    {
+        s_ResetUI?.Invoke(_waveIndex, _progress, _playerController.PuckCount, _playerController.PlayerLives);
+    }
+
     private void OnEnable()
     {
         cs_PlayerController.s_PlayerDied += GameOver;
+        cs_WaveController.s_ResetUI += ResetUI;
     }
 
     private void OnDisable()
     {
         cs_PlayerController.s_PlayerDied -= GameOver;
+        cs_WaveController.s_ResetUI -= ResetUI;
     }
 }

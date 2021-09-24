@@ -8,10 +8,15 @@ public class cs_AudioManager : MonoBehaviour
     [SerializeField] private AudioSource _audioSourceEffects;
     [SerializeField] private AudioSource _audioSourceMusic;
 
+    public float MasterVolume;
+    public float MusicVolume;
+    public float EffectsVolume;
+
     // Start is called before the first frame update
     void Start()
     {
-        _audioSourceEffects = GetComponent<AudioSource>();
+        SetVolumes(MasterVolume, MusicVolume, EffectsVolume);
+        _audioSourceMusic.Play();
     }
 
     private void PlayActionMusic()
@@ -28,6 +33,12 @@ public class cs_AudioManager : MonoBehaviour
     private void StopAudioClip(AudioClip _audioClip)
     {
 
+    }
+
+    private void SetVolumes(float _masterVolume, float _musicVolume, float _effectsVolume)
+    {
+        _audioSourceMusic.volume = _musicVolume * _masterVolume;
+        _audioSourceEffects.volume = _effectsVolume * _masterVolume;
     }
 
     private void OnEnable()
