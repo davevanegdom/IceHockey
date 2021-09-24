@@ -18,6 +18,10 @@ public class cs_UIManager : MonoBehaviour
     [SerializeField] private TMPro.TextMeshPro _leftGoalText;
     [SerializeField] private TMPro.TextMeshPro _rightGoalText;
 
+    [SerializeField] private Slider _masterVolume;
+    [SerializeField] private Slider _musicVolume;
+    [SerializeField] private Slider _effectsVolume;
+
 
     private void UpdateWaveIndex(int _waveIndex)
     {
@@ -37,14 +41,27 @@ public class cs_UIManager : MonoBehaviour
 
     private void UpdateCollectedPuckCount(int _puckCount, int _identifier)
     {
-        if(_identifier == 0)
-        {
-            //_leftGoalText.text = _puckCount.ToString();
-        }
-        else
-        {
-            //_rightGoalText.text = _puckCount.ToString();
-        }
+      
+    }
+
+    private void ExitGame()
+    {
+
+    }
+
+    private void OpenMenu()
+    {
+
+    }
+
+    private void CloseMenu()
+    {
+
+    }
+
+    private void UpdateSoundSettings()
+    {
+
     }
 
     private void UpdatePlayerLives(int _playerLives)
