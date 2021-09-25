@@ -156,7 +156,7 @@ MonoBehaviour:
     type: 3}
   _prefabStaticPuck: {fileID: 6101373807279073598, guid: 47002485a31f36c48852af4c42dced83,
     type: 3}
-  _shootForce: 50
+  _shootForce: 5
   _chargeTime: 1.5
   _chargeMultiplier: 0.75
   _puckSpawn: {fileID: 5898106266752193938}

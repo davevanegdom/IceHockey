@@ -24,6 +24,7 @@ public class cs_Enemy : MonoBehaviour
     [SerializeField] private GameObject[] _shootPrefabs;
     [Range(0, 1)] private float _moveAccuracy;
     [Range(0, 1)] private float _shootAccuracy;
+    [SerializeField] private float _defaultDecelarationRate;
     private Vector2 _followPos = Vector2.zero;
     #endregion
 
@@ -47,7 +48,6 @@ public class cs_Enemy : MonoBehaviour
         _cEnemy = GetComponent<CapsuleCollider2D>();
         _srEnemy = GetComponent<SpriteRenderer>();
         _srReaction = GetComponentInChildren<SpriteRenderer>();
-        //_srReaction.enabled = false;
         InvokeRepeating("ChaseOffset", 1f, 3f);
     }
 
@@ -56,25 +56,45 @@ public class cs_Enemy : MonoBehaviour
     {
         LookAtPlayer();
         MoveEnemy();
-
+        //DecelerateEnemy();
     }
 
     private void MoveEnemy()
     {
-        _rbEnemy.AddForce(transform.right * _moveSpeed * 10 * Time.deltaTime);
+        Vector2 _moveDir = transform.right * _moveSpeed * 50 * Time.deltaTime;
+        _rbEnemy.AddForce(_moveDir);
+
+        float _decelarationValue = Vector2.Dot(_rbEnemy.velocity, _moveDir);
+        _rbEnemy.drag = (1 -_decelarationValue) * _defaultDecelarationRate;
+    }
+
+    private void DecelerateEnemy()
+    {
+        float _decelarationValue = Vector2.Dot(_rbEnemy.velocity.normalized, (_player.transform.position - transform.position).normalized);
+        _rbEnemy.drag = (1 - _decelarationValue) * _defaultDecelarationRate;
+
     }
 
     private void LookAtPlayer()
     {
-        Vector2 _desiredDirection = new Vector2((_player.transform.position.x + _followPos.x)- transform.position.x, (_player.transform.position.y + _followPos.y) - transform.position.y);
-        transform.right = Vector3.Lerp(transform.right, _desiredDirection, _turnRate * Time.deltaTime);
+        if(Vector2.Distance(_player.transform.position, transform.position) > 1f)
+        {
+            Vector2 _desiredDirection = ((Vector2)_player.transform.position + _followPos) - (Vector2)transform.position;
+            transform.right = Vector3.Lerp(transform.right, _desiredDirection, _turnRate * Time.deltaTime);
+        }
+        else
+        {
+            Vector2 _desiredDirection = ((Vector2)_player.transform.position) - (Vector2)transform.position;
+            transform.right = Vector3.Lerp(transform.right, _desiredDirection, _turnRate * Time.deltaTime);
+        }
+        
     }
 
     private void ChaseOffset()
     {
         Vector2 _playerPos = _player.transform.position;
-        Vector2 _offSet = UnityEngine.Random.insideUnitCircle * 2 * _moveAccuracy;
-        _followPos = _playerPos + _offSet;
+        Vector2 _offSet = UnityEngine.Random.insideUnitCircle * 2f * _moveAccuracy;
+        _followPos = _offSet;
     }
 
     private void TakeDamage(int _damage)

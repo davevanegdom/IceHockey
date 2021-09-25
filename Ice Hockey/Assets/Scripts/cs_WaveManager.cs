@@ -10,7 +10,7 @@ public class cs_WaveManager : MonoBehaviour
     [SerializeField] private int _waveInterval;
 
     public static event Action<int> s_SetWaveIndex;
-    public static event Action<int, int, int> s_SpawnWave;
+    public static event Action<int, int, int, bool> s_SpawnWave;
     public static event Action<int> s_GameManagerAware;
 
     private void Start()
@@ -23,7 +23,7 @@ public class cs_WaveManager : MonoBehaviour
         WaveIndex = _currentWave;
         if(WaveIndex >= 0)
         {
-            s_SpawnWave?.Invoke(WaveIndex, Waves[WaveIndex].NumberOfEnemies.AmountOfEnemies, Waves[WaveIndex].TargetTime.WaveTime);
+            s_SpawnWave?.Invoke(WaveIndex, Waves[WaveIndex].NumberOfEnemies.AmountOfEnemies, Waves[WaveIndex].TargetTime.WaveTime, Waves[WaveIndex].IsCheckpointWave);
             SetWaveIndex(WaveIndex + 1);
         }
         else
@@ -36,7 +36,6 @@ public class cs_WaveManager : MonoBehaviour
     {
         WaveIndex++;
         StartCoroutine(WaveInterval());
-
     }
 
     public void SetWaveIndex(int _displayIndex)
@@ -61,7 +60,7 @@ public class cs_WaveManager : MonoBehaviour
     [System.Serializable]
     public class Wave
     {
-        public bool IsCheckpointWave;
+        public bool IsCheckpointWave = false;
         public EnemyCount NumberOfEnemies;
         public TargetTime TargetTime;
     }

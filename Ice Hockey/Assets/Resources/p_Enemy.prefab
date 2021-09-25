@@ -208,6 +208,7 @@ MonoBehaviour:
   _shootForce: 0
   _shootRange: 0
   _shootPrefabs: []
+  _defaultDecelarationRate: 5
   _reactionBubbles: []
 --- !u!70 &526447268873610011
 CapsuleCollider2D:

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4511121631704961068}
   - component: {fileID: 4511121631704961074}
   - component: {fileID: 4511121631704961073}
+  - component: {fileID: 4619927042680459933}
   m_Layer: 8
   m_Name: p_PuckGoal
   m_TagString: Untagged
@@ -127,6 +128,24 @@ MonoBehaviour:
     type: 3}
   CollectedPucks: 0
   _maxCollectablePucks: 5
+--- !u!68 &4619927042680459933
+EdgeCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4511121631704961070}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 6200000, guid: 052c00dce1bcef94f80c490022fea8d3, type: 2}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_EdgeRadius: 0
+  m_Points:
+  - {x: -0.4253653, y: -0.29371086}
+  - {x: 0.46490324, y: -0.2937108}
 --- !u!1 &8345318716431071838
 GameObject:
   m_ObjectHideFlags: 0

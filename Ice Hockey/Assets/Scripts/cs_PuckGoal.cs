@@ -33,7 +33,7 @@ public class cs_PuckGoal : MonoBehaviour
             //Clear all previous stored pucks
             foreach (Transform _child in transform)
             {
-                if(_child.GetSiblingIndex() > 1)
+                if(_child.GetSiblingIndex() > 0)
                 {
                     Destroy(_child.gameObject);
                 }
@@ -52,10 +52,11 @@ public class cs_PuckGoal : MonoBehaviour
 
         foreach (Transform _puck in transform)
         {
-            if(_puck.GetSiblingIndex() > 1)
+            if(_puck.GetSiblingIndex() > 0)
             {
                 _puck.transform.localPosition = new Vector2(_startPos + (_loopInt * _intervalDistance), -0.5f);
                 _loopInt++;
+                Debug.Log(_puck.transform.localPosition);
             }
         }
     }
@@ -83,14 +84,15 @@ public class cs_PuckGoal : MonoBehaviour
         {
             PlayerPickUpPucks(CollectedPucks);
         }
+    }
 
+    private void OnCollisionEnter2D(Collision2D _collision)
+    {
         if (_collision.gameObject.tag == "Puck" && CollectedPucks < _maxCollectablePucks)
         {
             CollectedPucks++;
             UpdateCollectedCount(CollectedPucks);
             Destroy(_collision.gameObject);
         }
-        Debug.Log("Hello");
-
     }
 }

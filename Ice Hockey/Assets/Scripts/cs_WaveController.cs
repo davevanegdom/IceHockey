@@ -14,9 +14,11 @@ public class cs_WaveController : MonoBehaviour
     private float _timeInterval;
     private int _enemiesKilled;
     private int _enemiesSpawned;
+    private bool _isCheckpointWave;
 
     public static event Action<int> s_WaveEnded;
     public static event Action<float> s_SetWaveProgress;
+    public static event Action<int> s_CheckpointWave;
     public static event Action<int, float, int, int> s_ResetUI;
 
     private void Start()
@@ -24,7 +26,7 @@ public class cs_WaveController : MonoBehaviour
         _waveManager = GetComponent<cs_WaveManager>();
     }
 
-    public void SpawnEnemies(int _newWaveIndex, int _enemiesCount, int _newWaveTime)
+    public void SpawnEnemies(int _newWaveIndex, int _enemiesCount, int _newWaveTime, bool _isCheckpoint)
     {
         _waveIndex = _newWaveIndex;
         _enemiesToSpawn = _enemiesCount;
@@ -32,6 +34,7 @@ public class cs_WaveController : MonoBehaviour
         _timeInterval = _waveTime / _enemiesToSpawn;
         _enemiesKilled = 0;
         _enemiesSpawned = 0;
+        _isCheckpointWave = _isCheckpoint;
 
         s_ResetUI?.Invoke(_waveIndex + 1, 0, 0, 0);
         SpawnEnemy();
@@ -62,6 +65,10 @@ public class cs_WaveController : MonoBehaviour
 
         if (_enemiesKilled == _enemiesToSpawn)
         {
+            if (_isCheckpointWave)
+            {
+                s_CheckpointWave?.Invoke(_waveIndex);
+            }
             s_WaveEnded?.Invoke(_waveIndex);
             Debug.Log("Wave Ended");
             StopAllCoroutines();
@@ -119,12 +126,4 @@ public class cs_WaveController : MonoBehaviour
         cs_Enemy.s_EnemyDied -= WaveProgress;
     }
 
-    // !!-DISABLE FOR BUILD-!!
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            WaveProgress();
-        }
-    }
 }

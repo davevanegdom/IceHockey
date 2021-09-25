@@ -39,6 +39,8 @@ public class cs_AudioManager : MonoBehaviour
     {
         _audioSourceMusic.volume = _musicVolume * _masterVolume;
         _audioSourceEffects.volume = _effectsVolume * _masterVolume;
+
+        Debug.Log("Set Volumes");
     }
 
     private void OnEnable()
@@ -46,11 +48,13 @@ public class cs_AudioManager : MonoBehaviour
         cs_Puck.s_pickUpSound += PlayAudioClip;
         cs_PlayerController.s_ShootEffects += PlayAudioClip;
         cs_PlayerController.s_PlayerEffects += PlayAudioClip;
+        cs_UIManager.s_SetVolumes += SetVolumes;
     }
     private void OnDisable()
     {
         cs_Puck.s_pickUpSound -= PlayAudioClip;
         cs_PlayerController.s_ShootEffects -= PlayAudioClip;
         cs_PlayerController.s_PlayerEffects -= PlayAudioClip;
+        cs_UIManager.s_SetVolumes -= SetVolumes;
     }
 }

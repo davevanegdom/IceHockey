@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
+using UnityEngine.SceneManagement;
 
 public class cs_UIManager : MonoBehaviour
 {
@@ -22,6 +24,7 @@ public class cs_UIManager : MonoBehaviour
     [SerializeField] private Slider _musicVolume;
     [SerializeField] private Slider _effectsVolume;
 
+    public static event Action<float, float, float> s_SetVolumes;
 
     private void UpdateWaveIndex(int _waveIndex)
     {
@@ -39,29 +42,37 @@ public class cs_UIManager : MonoBehaviour
         _playerPuckCount.text = _puckCount.ToString();
     }
 
-    private void UpdateCollectedPuckCount(int _puckCount, int _identifier)
+    public void LoadScene(int _buildIndex)
     {
-      
+        SceneManager.LoadScene(_buildIndex);
     }
 
-    private void ExitGame()
+    public void ExitGame()
     {
-
+        Application.Quit();
     }
 
-    private void OpenMenu()
+    public void OpenMenu()
     {
-
+        Time.timeScale = 0f;
+        cs_PlayerController _playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<cs_PlayerController>();
+        _playerController.enabled = false;
     }
 
-    private void CloseMenu()
+    public void CloseMenu()
     {
-
+        Time.timeScale = 1f;
+        cs_PlayerController _playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<cs_PlayerController>();
+        _playerController.enabled = true;
     }
 
-    private void UpdateSoundSettings()
+    public void UpdateSoundSettings()
     {
+        float _master = _masterVolume.value;
+        float _music = _musicVolume.value;
+        float _effects = _effectsVolume.value;
 
+        s_SetVolumes?.Invoke(_master, _music, _effects);
     }
 
     private void UpdatePlayerLives(int _playerLives)
@@ -102,7 +113,6 @@ public class cs_UIManager : MonoBehaviour
     {
         cs_WaveManager.s_SetWaveIndex += UpdateWaveIndex;
         cs_WaveController.s_SetWaveProgress += UpdateWaveProgress;
-        cs_PuckGoal.s_SetCollectedPucks += UpdateCollectedPuckCount;
         cs_PlayerController.s_UpdatePlayerPucks += UpdatePlayerPuckCount;
         cs_PlayerController.s_TakeDamage += UpdatePlayerLives;
         cs_GameManager.s_ResetUI += ResetUI;
@@ -113,7 +123,6 @@ public class cs_UIManager : MonoBehaviour
     {
         cs_WaveManager.s_SetWaveIndex -= UpdateWaveIndex;
         cs_WaveController.s_SetWaveProgress -= UpdateWaveProgress;
-        cs_PuckGoal.s_SetCollectedPucks -= UpdateCollectedPuckCount;
         cs_PlayerController.s_UpdatePlayerPucks -= UpdatePlayerPuckCount;
         cs_PlayerController.s_TakeDamage -= UpdatePlayerLives;
         cs_GameManager.s_ResetUI -= ResetUI;

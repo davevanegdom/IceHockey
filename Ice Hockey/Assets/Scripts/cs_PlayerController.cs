@@ -51,7 +51,7 @@ public class cs_PlayerController : MonoBehaviour
     #region Actions
     public static event Action<Vector2, float> s_ShootPuck;
     public static event Action<AudioClip> s_ShootEffects;
-    public static event Action s_PlayerDied;
+    public static event Action<GameObject> s_PlayerDied;
     public static event Action<int> s_UpdatePlayerPucks;
     public static event Action<AudioClip> s_PlayerEffects;
     public static event Action<int> s_TakeDamage;
@@ -117,6 +117,14 @@ public class cs_PlayerController : MonoBehaviour
         #region Other
         LookAtMouse(Input.mousePosition);
         DeceleratePlayer();
+
+
+        // !!-DISABLE FOR BUILD-!!
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            PlayerHit(PlayerLives);
+        }
+        
         #endregion
     }
 
@@ -180,8 +188,19 @@ public class cs_PlayerController : MonoBehaviour
 
     private void PlayerShootPuck()
     {
+        _shootDirections = new List<Vector2>();
         foreach (GameObject _staticPuck in _displayedStaticPucks)
         {
+            if(_displayedStaticPucks.Count > 1)
+            {
+                Vector2 _puckDir = (_staticPuck.transform.position - transform.position);
+                Vector2 _shootDir = new Vector2(transform.position.x + _puckDir.x, transform.position.y + _puckDir.y);
+                _shootDirections.Add(_shootDir);
+            }
+            else
+            {
+                _shootDirections.Add(transform.right);
+            }
             Destroy(_staticPuck);
         }
 
@@ -190,13 +209,11 @@ public class cs_PlayerController : MonoBehaviour
         foreach (Vector2 _shootDirection in _shootDirections)
         {
             GameObject _puck = Instantiate(_prefabDynamicPuck, _puckSpawn.position, Quaternion.identity);
-            _shootForce = _shootForce * _chargeMultiplier;
             _puck.GetComponent<cs_Puck>().ShootPuck(_shootDirection, (_shootForce * _chargeMultiplier));
+            Debug.Log(_shootDirection);
         }
 
-
         PuckCount -=  _displayedStaticPucks.Count;
-        _shootForce = 50f;
         s_ShootEffects?.Invoke(_shootSound);
         s_ShakeCamera?.Invoke(0.25f);
         s_UpdatePlayerPucks?.Invoke(PuckCount);
@@ -216,9 +233,9 @@ public class cs_PlayerController : MonoBehaviour
 
     private void PlayerHit(int _damage)
     {
-        s_ShakeCamera?.Invoke(0.5f);
-
-        if(PlayerLives - _damage > 0)
+        s_ShakeCamera?.Invoke(0.3f);
+        int _remainingLives = PlayerLives - _damage;
+        if (_remainingLives > 0)
         {
             PlayerLives -= _damage;
             s_PlayerEffects?.Invoke(_playerHit);
@@ -229,10 +246,8 @@ public class cs_PlayerController : MonoBehaviour
             PlayerLives = 0;
             s_TakeDamage?.Invoke(PlayerLives);
             s_PlayerEffects?.Invoke(_playerDeath);
-            s_PlayerDied?.Invoke();
+            s_PlayerDied?.Invoke(gameObject);
         }
-
-        
     }
 
     private void DisplayPucks(int _pucks)
@@ -247,8 +262,7 @@ public class cs_PlayerController : MonoBehaviour
         }
 
         _displayedStaticPucks = new List<GameObject>();
-        _shootDirections = new List<Vector2>();
-        float _puckInterval = 0.2f;
+        float _puckInterval = 0.2f * 1.5f;
 
         if (_pucks > 1)
         {
@@ -260,7 +274,6 @@ public class cs_PlayerController : MonoBehaviour
                 GameObject _staticPuck = Instantiate(_prefabStaticPuck, _puckSpawn);
                 _staticPuck.transform.localPosition = new Vector2(.1f, _startPos + _puckInterval * i);
                 _displayedStaticPucks.Add(_staticPuck);
-                _shootDirections.Add(new Vector2(transform.right.x - (_startPos + _puckInterval * i), transform.right.y).normalized);
             }
         }
         else
@@ -268,7 +281,6 @@ public class cs_PlayerController : MonoBehaviour
             GameObject _staticPuck = Instantiate(_prefabStaticPuck, _puckSpawn);
             _staticPuck.transform.localPosition = new Vector2(.1f, 0);
             _displayedStaticPucks.Add(_staticPuck);
-            _shootDirections.Add((transform.right).normalized);
         }
     }
 
@@ -284,7 +296,7 @@ public class cs_PlayerController : MonoBehaviour
         s_ShootEffects?.Invoke(_chargeSound);
         float _time = 0;
 
-        while(_time > _chargeTime)
+        while(_time < _chargeTime)
         {
             _time += Time.deltaTime;
             _chargeMultiplier = Mathf.Lerp(0.75f, 1.25f, _time / _chargeTime);
@@ -293,7 +305,8 @@ public class cs_PlayerController : MonoBehaviour
 
         if(PuckCount > 2)
         {
-            DisplayPucks(PuckCount);
+            int _pucksToDisplay = PuckCount;
+            DisplayPucks(Mathf.Clamp(_pucksToDisplay, 3, 5));
         }
     }
 

@@ -55,14 +55,36 @@ public class cs_GameManager : MonoBehaviour
         s_ResetUI?.Invoke(_savedWave + 1, 0f, _savedPucks, _savedLives);
     }
 
-    private void CheckPoint()
+    private void CheckPoint(int _waveIndex)
     {
-
+        _savedWave = _waveIndex;
+        _savedLives = GameObject.FindGameObjectWithTag("Player").GetComponent<cs_PlayerController>().PlayerLives;
     }
 
-    private void GameOver()
+    private void GameOver(GameObject _player)
     {
+        Debug.Log("GameOver");
+        StartCoroutine(EnableDisablePlayer(_player, false, 0f));
+        StartCoroutine(EnableDisablePlayer(_player, true, 3f));
+    }
 
+    private IEnumerator EnableDisablePlayer(GameObject _player, bool _state, float _time)
+    {
+        yield return new WaitForSeconds(_time);
+        _player.GetComponent<cs_PlayerController>().enabled = _state;
+        _player.GetComponent<Collider2D>().enabled = _state;
+        _player.GetComponent<Rigidbody2D>().simulated = _state;
+        _player.GetComponent<SpriteRenderer>().enabled = _state;
+
+        foreach (Transform _child in _player.transform)
+        {
+            _child.gameObject.SetActive(_state);
+        }
+
+        if (_state)
+        {
+
+        }
     }
 
     private void ResetUI(int _waveIndex, float _progress, int _playerPucks, int _playerLives)
@@ -74,11 +96,13 @@ public class cs_GameManager : MonoBehaviour
     {
         cs_PlayerController.s_PlayerDied += GameOver;
         cs_WaveController.s_ResetUI += ResetUI;
+        cs_WaveController.s_CheckpointWave += CheckPoint;
     }
 
     private void OnDisable()
     {
         cs_PlayerController.s_PlayerDied -= GameOver;
         cs_WaveController.s_ResetUI -= ResetUI;
+        cs_WaveController.s_CheckpointWave -= CheckPoint;
     }
 }
