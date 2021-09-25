@@ -56,7 +56,6 @@ public class cs_PuckGoal : MonoBehaviour
             {
                 _puck.transform.localPosition = new Vector2(_startPos + (_loopInt * _intervalDistance), -0.5f);
                 _loopInt++;
-                Debug.Log(_puck.transform.localPosition);
             }
         }
     }
@@ -68,7 +67,20 @@ public class cs_PuckGoal : MonoBehaviour
 
         foreach (Transform _staticPuck in transform)
         {
-            if(_staticPuck.GetSiblingIndex() > 1)
+            if(_staticPuck.GetSiblingIndex() > 0)
+            {
+                Destroy(_staticPuck.gameObject);
+            }
+        }
+        CollectedPucks = 0;
+        UpdateCollectedCount(CollectedPucks);
+    }
+
+    private void ClearGoal()
+    {
+        foreach (Transform _staticPuck in transform)
+        {
+            if (_staticPuck.GetSiblingIndex() > 0)
             {
                 Destroy(_staticPuck.gameObject);
             }
@@ -94,5 +106,15 @@ public class cs_PuckGoal : MonoBehaviour
             UpdateCollectedCount(CollectedPucks);
             Destroy(_collision.gameObject);
         }
+    }
+
+    private void OnEnable()
+    {
+        cs_GameManager.s_ClearGoals += ClearGoal;
+    }
+
+    private void OnDisable()
+    {
+        cs_GameManager.s_ClearGoals -= ClearGoal;
     }
 }

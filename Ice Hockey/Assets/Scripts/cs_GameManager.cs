@@ -20,6 +20,7 @@ public class cs_GameManager : MonoBehaviour
     public static event Action<int> s_StartWaves;
     public static event Action<int, float, int, int> s_ResetUI;
     public static event Action s_SetupCamera;
+    public static event Action s_ClearGoals;
 
     private void Awake()
     {
@@ -30,17 +31,6 @@ public class cs_GameManager : MonoBehaviour
         SpawnPlayer();
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     private void SpawnPlayer()
     {
@@ -64,7 +54,7 @@ public class cs_GameManager : MonoBehaviour
     private void GameOver(GameObject _player)
     {
         Debug.Log("GameOver");
-        StartCoroutine(EnableDisablePlayer(_player, false, 0f));
+        StartCoroutine(EnableDisablePlayer(_player, false, 1f));
         _player.transform.position = Vector2.zero;
         StartCoroutine(EnableDisablePlayer(_player, true, 3f));
     }
@@ -82,9 +72,30 @@ public class cs_GameManager : MonoBehaviour
             _child.gameObject.SetActive(_state);
         }
 
-        if (_state)
+        if (!_state)
         {
+            s_ClearGoals?.Invoke();
+            GameObject[] _enemies = GameObject.FindGameObjectsWithTag("Enemy");
+            foreach (GameObject _enemy in _enemies)
+            {
+                Destroy(_enemy);
+            }
+            GameObject[] _pucks = GameObject.FindGameObjectsWithTag("Puck");
 
+            foreach (GameObject _puck in _pucks)
+            {
+                Destroy(_puck);
+            }
+            GameObject[] _projectiles = GameObject.FindGameObjectsWithTag("Projectile");
+            foreach (GameObject _projectile in _projectiles)
+            {
+                Destroy(_projectile);
+            }
+        }
+        else
+        {
+            s_StartWaves?.Invoke(_savedWave);
+            s_ResetUI?.Invoke(_savedWave + 1, 0f, _savedPucks, _savedLives);
         }
     }
 
@@ -98,6 +109,7 @@ public class cs_GameManager : MonoBehaviour
         cs_PlayerController.s_PlayerDied += GameOver;
         cs_WaveController.s_ResetUI += ResetUI;
         cs_WaveController.s_CheckpointWave += CheckPoint;
+
     }
 
     private void OnDisable()

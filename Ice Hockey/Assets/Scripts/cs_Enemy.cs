@@ -9,12 +9,13 @@ public class cs_Enemy : MonoBehaviour
     private Rigidbody2D _rbEnemy;
     private CapsuleCollider2D _cEnemy;
     private SpriteRenderer _srEnemy;
+    [SerializeField] private Sprite[] _enemySprites;
     private bool _enteredArena;
 
     [SerializeField] private float _enemyHealth;
 
     #region Movement & Shooting
-    [SerializeField] private bool _shootAbility = true;
+    private bool _shootAbility;
     [SerializeField] private bool _canShoot = true;
     [SerializeField] private int _moveSpeed;
     [SerializeField] private int _turnRate;
@@ -29,7 +30,7 @@ public class cs_Enemy : MonoBehaviour
     #endregion
 
     #region Reaction
-    private enum _Reactions {Laughing, Angry}
+    private enum _Reactions {Laughing, Angry, Throwing}
     private _Reactions _reaction;
     [SerializeField] private Sprite[] _reactionBubbles;
     private SpriteRenderer _srReaction;
@@ -37,17 +38,22 @@ public class cs_Enemy : MonoBehaviour
 
     #region Actions
     public static event Action s_EnemyDied;
+    public static event Action<int> s_HitPlayer;
     #endregion 
 
 
     // Start is called before the first frame update
     void Start()
     {
+        _shootAbility = ShootAbility();
         _player = GameObject.FindGameObjectWithTag("Player");
         _rbEnemy = GetComponent<Rigidbody2D>();
         _cEnemy = GetComponent<CapsuleCollider2D>();
         _srEnemy = GetComponent<SpriteRenderer>();
-        _srReaction = GetComponentInChildren<SpriteRenderer>();
+        _srReaction = transform.GetChild(0).GetComponent<SpriteRenderer>();
+        _srReaction.enabled = false;
+        _srEnemy.sprite = _enemySprites[UnityEngine.Random.Range(0, _enemySprites.Length)];
+
         InvokeRepeating("ChaseOffset", 1f, 3f);
         InvokeRepeating("Unclutter", 5f, 3f);
         InvokeRepeating("ShootAtPlayer", 3f, _shootRate);
@@ -58,7 +64,8 @@ public class cs_Enemy : MonoBehaviour
     {
         LookAtPlayer();
         MoveEnemy();
-        //DecelerateEnemy();
+        transform.GetChild(0).transform.rotation = Quaternion.Euler(0, 0, -(transform.rotation.z));
+        transform.GetChild(0).transform.position = new Vector2(transform.position.x, transform.position.y + 0.2f);
     }
 
     private void MoveEnemy()
@@ -68,13 +75,6 @@ public class cs_Enemy : MonoBehaviour
 
         float _decelarationValue = Vector2.Dot(_rbEnemy.velocity, _moveDir);
         _rbEnemy.drag = (1 -_decelarationValue) * _defaultDecelarationRate;
-    }
-
-    private void DecelerateEnemy()
-    {
-        float _decelarationValue = Vector2.Dot(_rbEnemy.velocity.normalized, (_player.transform.position - transform.position).normalized);
-        _rbEnemy.drag = (1 - _decelarationValue) * _defaultDecelarationRate;
-
     }
 
     private void LookAtPlayer()
@@ -104,6 +104,10 @@ public class cs_Enemy : MonoBehaviour
         if(_enemyHealth - _damage > 0)
         {
             _enemyHealth -= _damage;
+            if(_enemyHealth < 5)
+            {
+                Reaction(_Reactions.Angry);
+            }
         }
         else
         {
@@ -137,8 +141,6 @@ public class cs_Enemy : MonoBehaviour
             Rigidbody2D _rbProjectile = _objectToShoot.GetComponent<Rigidbody2D>();
             _rbProjectile.AddForce(transform.right * _shootForce);
             _canShoot = false;
-            Debug.Log("Shoot");
-
             StartCoroutine(CooldownTimer());
         }
     }
@@ -157,9 +159,41 @@ public class cs_Enemy : MonoBehaviour
         }
     }
 
+    private bool ShootAbility()
+    {
+        float _value = UnityEngine.Random.Range(0f, 1f);
+        if(_value >= 0.5f)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private void PlayerDied(GameObject _player)
+    {
+        Reaction(_Reactions.Laughing);
+    }
+
     private void Reaction(_Reactions _reaction)
     {
+        switch (_reaction)
+        {
+            case _Reactions.Angry:
+                _srReaction.sprite = _reactionBubbles[0];
+                break;
+            case _Reactions.Laughing:
+                _srReaction.sprite = _reactionBubbles[1];
+                break;
+            case _Reactions.Throwing:
+                _srReaction.sprite = _reactionBubbles[2];
+                break;
+        }
 
+        _srReaction.enabled = true;
+        StartCoroutine(HideReaction());
     }
 
     private IEnumerator CooldownTimer()
@@ -178,17 +212,55 @@ public class cs_Enemy : MonoBehaviour
         _canShoot = true;
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private IEnumerator HideReaction()
     {
-        if(collision.gameObject.tag == "Puck")
+        yield return new WaitForSeconds(2f);
+        _srReaction.enabled = false;
+    }
+
+    private void OnTriggerEnter2D(Collider2D _collision)
+    {
+        if (_collision.gameObject.tag == "Puck")
         {
-            float _rbPuckVelocity = collision.gameObject.GetComponent<Rigidbody2D>().velocity.magnitude;
-            if(_rbPuckVelocity > 10f)
+            float _rbPuckVelocity = _collision.gameObject.GetComponent<Rigidbody2D>().velocity.magnitude;
+            if (_rbPuckVelocity > 10f)
             {
-                float _puckDamage = _rbPuckVelocity; 
+                float _puckDamage = _rbPuckVelocity;
                 TakeDamage(_puckDamage);
                 Debug.Log(_puckDamage);
             }
         }
+    }
+
+    private void OnCollisionEnter2D(Collision2D _collision)
+    {
+        if (_collision.gameObject.tag == "Player")
+        {
+            StartCoroutine(HitPlayer());
+        }
+    }
+
+    private IEnumerator HitPlayer()
+    {
+        yield return new WaitForSeconds(1.5f);
+        Collider2D[] _hits = Physics2D.OverlapCircleAll(transform.position, .4f);
+
+        foreach (Collider2D _hit in _hits)
+        {
+            if(_hit.gameObject.tag == "Player")
+            {
+                s_HitPlayer?.Invoke(2);
+            }
+        }
+    }
+
+    private void OnEnable()
+    {
+        cs_PlayerController.s_PlayerDied += PlayerDied;
+    }
+
+    private void OnDisable()
+    {
+        cs_PlayerController.s_PlayerDied -= PlayerDied;
     }
 }

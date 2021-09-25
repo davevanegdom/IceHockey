@@ -18,7 +18,14 @@ public class cs_Projectile : MonoBehaviour
         _srProjectile = GetComponent<SpriteRenderer>();
         _srProjectile.sprite = _projectiles[UnityEngine.Random.Range(0, _projectiles.Count - 1)];
         _rbProjectile = GetComponent<Rigidbody2D>();
-        Destroy(gameObject, _destroyAfterTime);
+    }
+
+    private void Update()
+    {
+        if(_rbProjectile.velocity.magnitude < 2f)
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

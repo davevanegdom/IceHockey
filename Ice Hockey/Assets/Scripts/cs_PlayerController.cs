@@ -210,7 +210,6 @@ public class cs_PlayerController : MonoBehaviour
         {
             GameObject _puck = Instantiate(_prefabDynamicPuck, _puckSpawn.position, Quaternion.identity);
             _puck.GetComponent<cs_Puck>().ShootPuck(_shootDirection, (_shootForce * _chargeMultiplier));
-            Debug.Log(_shootDirection);
         }
 
         PuckCount -=  _displayedStaticPucks.Count;
@@ -328,11 +327,13 @@ public class cs_PlayerController : MonoBehaviour
         cs_Puck.s_PuckPickedUp += PickUpPuck;
         cs_PuckGoal.s_PlayerCollectPucks += PickUpPuck;
         cs_Projectile.s_ProjectileDamage += PlayerHit;
+        cs_Enemy.s_HitPlayer += PlayerHit;
     }
     private void OnDisable()
     {
         cs_Puck.s_PuckPickedUp -= PickUpPuck;
         cs_PuckGoal.s_PlayerCollectPucks -= PickUpPuck;
         cs_Projectile.s_ProjectileDamage -= PlayerHit;
+        cs_Enemy.s_HitPlayer -= PlayerHit;
     }
 }

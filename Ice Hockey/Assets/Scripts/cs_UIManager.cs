@@ -33,7 +33,7 @@ public class cs_UIManager : MonoBehaviour
 
     private void UpdateWaveProgress(float _progress)
     {
-        _progressText.text = (Mathf.RoundToInt(_progress) * 100).ToString() + "%";
+        _progressText.text = Mathf.RoundToInt(_progress * 100).ToString() + "%";
         _progressbar.value = _progress;
     }
 
