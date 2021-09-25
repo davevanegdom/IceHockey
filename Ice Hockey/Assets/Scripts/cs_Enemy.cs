@@ -11,17 +11,17 @@ public class cs_Enemy : MonoBehaviour
     private SpriteRenderer _srEnemy;
     private bool _enteredArena;
 
-    [SerializeField] private int _enemyLives;
+    [SerializeField] private float _enemyHealth;
 
     #region Movement & Shooting
-    [SerializeField] private bool _shootAbility;
-    [SerializeField] private bool _canShoot;
+    [SerializeField] private bool _shootAbility = true;
+    [SerializeField] private bool _canShoot = true;
     [SerializeField] private int _moveSpeed;
     [SerializeField] private int _turnRate;
     [SerializeField] private float _shootRate;
     [SerializeField] private float _shootForce;
     [SerializeField] private float _shootRange;
-    [SerializeField] private GameObject[] _shootPrefabs;
+    [SerializeField] private GameObject _shootPrefab;
     [Range(0, 1)] private float _moveAccuracy;
     [Range(0, 1)] private float _shootAccuracy;
     [SerializeField] private float _defaultDecelarationRate;
@@ -49,6 +49,8 @@ public class cs_Enemy : MonoBehaviour
         _srEnemy = GetComponent<SpriteRenderer>();
         _srReaction = GetComponentInChildren<SpriteRenderer>();
         InvokeRepeating("ChaseOffset", 1f, 3f);
+        InvokeRepeating("Unclutter", 5f, 3f);
+        InvokeRepeating("ShootAtPlayer", 3f, _shootRate);
     }
 
     // Update is called once per frame
@@ -61,7 +63,7 @@ public class cs_Enemy : MonoBehaviour
 
     private void MoveEnemy()
     {
-        Vector2 _moveDir = transform.right * _moveSpeed * 50 * Time.deltaTime;
+        Vector2 _moveDir = ((Vector2)transform.right + (_player.GetComponent<Rigidbody2D>().velocity * 0.9f).normalized) * _moveSpeed * (5 * _rbEnemy.mass) * Time.deltaTime;
         _rbEnemy.AddForce(_moveDir);
 
         float _decelarationValue = Vector2.Dot(_rbEnemy.velocity, _moveDir);
@@ -97,41 +99,62 @@ public class cs_Enemy : MonoBehaviour
         _followPos = _offSet;
     }
 
-    private void TakeDamage(int _damage)
+    private void TakeDamage(float _damage)
     {
-        if(_enemyLives - _damage > 0)
+        if(_enemyHealth - _damage > 0)
         {
-            _enemyLives -= _damage;
-
-            if(_enemyLives == 1)
-            {
-                Reaction(_Reactions.Angry);
-            }
+            _enemyHealth -= _damage;
         }
         else
         {
             s_EnemyDied?.Invoke();
             Destroy(gameObject);
         }
-        
     }
 
     private void Unclutter()
     {
-         
+        Collider2D[] _enemies = Physics2D.OverlapCircleAll(transform.position, 2f, LayerMask.NameToLayer("Gameplay"));
+        if(_enemies.Length > 0)
+        {
+            foreach (Collider2D _enemy in _enemies)
+            {
+                if (_enemy.gameObject.tag == "Enemy")
+                {
+                    _enemy.GetComponent<Rigidbody2D>().AddForce((new Vector2(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)) * 100f));
+                }
+            }
+            Debug.Log("Unclutter");
+        }
+        
     }
 
     private void ShootAtPlayer()
     {
-        if (_shootAbility && _canShoot && Vector2.Distance(_player.transform.position, transform.position) < _shootRange)
+        if (_shootAbility && _canShoot && Vector2.Distance(_player.transform.position, transform.position) < _shootRange && !ObstacleCheck())
         {
-            GameObject _objectToShoot = Instantiate(_shootPrefabs[UnityEngine.Random.Range(0, _shootPrefabs.Length - 1)], transform.position, Quaternion.identity);
+            GameObject _objectToShoot = Instantiate(_shootPrefab, new Vector2(transform.localPosition.x + 0.25f, transform.localPosition.y), Quaternion.identity);
             Rigidbody2D _rbProjectile = _objectToShoot.GetComponent<Rigidbody2D>();
             _rbProjectile.AddForce(transform.right * _shootForce);
             _canShoot = false;
-        }
+            Debug.Log("Shoot");
 
-        StartCoroutine(CooldownTimer());
+            StartCoroutine(CooldownTimer());
+        }
+    }
+
+    private bool ObstacleCheck()
+    {
+        RaycastHit2D _hit = Physics2D.Raycast(transform.position, transform.right, _shootRange, LayerMask.NameToLayer("Gameplay"));
+
+        if (_hit.collider == null)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
     private void Reaction(_Reactions _reaction)
@@ -153,26 +176,19 @@ public class cs_Enemy : MonoBehaviour
         yield return new WaitForSeconds(_waitTime);
 
         _canShoot = true;
-        ShootAtPlayer();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.gameObject.tag == "Puck")
         {
-            if(collision.gameObject.GetComponent<Rigidbody2D>().velocity.magnitude > 2f)
+            float _rbPuckVelocity = collision.gameObject.GetComponent<Rigidbody2D>().velocity.magnitude;
+            if(_rbPuckVelocity > 10f)
             {
-                TakeDamage(1);
+                float _puckDamage = _rbPuckVelocity; 
+                TakeDamage(_puckDamage);
+                Debug.Log(_puckDamage);
             }
         }
     }
-
-    //private void OnCollisionExit(Collision collision)
-    //{
-    //    if(collision.gameObject.tag == "ArenaColliders")
-    //    {
-    //        _cEnemy.isTrigger = false;
-    //    }
-
-    //}
 }

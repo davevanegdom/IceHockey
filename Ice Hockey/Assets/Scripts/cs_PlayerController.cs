@@ -139,7 +139,7 @@ public class cs_PlayerController : MonoBehaviour
 
             if (_rbPlayer.velocity.magnitude < _minMoveSpeed)
             {
-                _rbPlayer.AddForce(deltaMove * (1 - (speed / MaxMoveSpeed)) * (_defaultMoveSpeed * 2 * 50 * Time.deltaTime));
+                _rbPlayer.AddForce(deltaMove * (1 - (speed / MaxMoveSpeed)) * (_defaultMoveSpeed * (100 * _rbPlayer.mass) * Time.deltaTime));
                 Vector2 _debugPos = new Vector2(transform.position.x + (_rbPlayer.velocity.x * speed), transform.position.y + (_rbPlayer.velocity.y * speed));
                 Debug.DrawLine(transform.position, _debugPos, Color.red);
             }
@@ -327,10 +327,12 @@ public class cs_PlayerController : MonoBehaviour
     {
         cs_Puck.s_PuckPickedUp += PickUpPuck;
         cs_PuckGoal.s_PlayerCollectPucks += PickUpPuck;
+        cs_Projectile.s_ProjectileDamage += PlayerHit;
     }
     private void OnDisable()
     {
         cs_Puck.s_PuckPickedUp -= PickUpPuck;
         cs_PuckGoal.s_PlayerCollectPucks -= PickUpPuck;
+        cs_Projectile.s_ProjectileDamage -= PlayerHit;
     }
 }

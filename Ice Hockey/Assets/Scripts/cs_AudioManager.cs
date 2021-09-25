@@ -39,8 +39,6 @@ public class cs_AudioManager : MonoBehaviour
     {
         _audioSourceMusic.volume = _musicVolume * _masterVolume;
         _audioSourceEffects.volume = _effectsVolume * _masterVolume;
-
-        Debug.Log("Set Volumes");
     }
 
     private void OnEnable()

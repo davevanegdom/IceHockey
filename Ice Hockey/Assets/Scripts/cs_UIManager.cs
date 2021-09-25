@@ -33,7 +33,7 @@ public class cs_UIManager : MonoBehaviour
 
     private void UpdateWaveProgress(float _progress)
     {
-        _progressText.text = (_progress * 100).ToString() + "%";
+        _progressText.text = (Mathf.RoundToInt(_progress) * 100).ToString() + "%";
         _progressbar.value = _progress;
     }
 
@@ -77,7 +77,6 @@ public class cs_UIManager : MonoBehaviour
 
     private void UpdatePlayerLives(int _playerLives)
     {
-        Debug.Log(_playerLives);
         if(_heartsPanelParent.childCount > 0)
         {
             foreach (Transform _heart in _heartsPanelParent)

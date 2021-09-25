@@ -6757,17 +6757,17 @@ MonoBehaviour:
   Waves:
   - IsCheckpointWave: 0
     NumberOfEnemies:
-      AmountOfEnemies: 2
+      AmountOfEnemies: 10
     TargetTime:
       WaveTime: 10
-  - IsCheckpointWave: 0
+  - IsCheckpointWave: 1
     NumberOfEnemies:
-      AmountOfEnemies: 4
+      AmountOfEnemies: 15
     TargetTime:
       WaveTime: 15
   - IsCheckpointWave: 0
     NumberOfEnemies:
-      AmountOfEnemies: 8
+      AmountOfEnemies: 20
     TargetTime:
       WaveTime: 20
   - IsCheckpointWave: 0
