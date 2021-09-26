@@ -24,6 +24,8 @@ public class cs_UIManager : MonoBehaviour
     [SerializeField] private Slider _musicVolume;
     [SerializeField] private Slider _effectsVolume;
 
+    [SerializeField] private GameObject _menuPanel;
+
     public static event Action<float, float, float> s_SetVolumes;
 
     private void UpdateWaveIndex(int _waveIndex)
@@ -126,5 +128,14 @@ public class cs_UIManager : MonoBehaviour
         cs_PlayerController.s_TakeDamage -= UpdatePlayerLives;
         cs_GameManager.s_ResetUI -= ResetUI;
         cs_WaveController.s_ResetUI -= ResetUI;
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            OpenMenu();
+            _menuPanel.SetActive(true);
+        }
     }
 }

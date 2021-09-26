@@ -5056,7 +5056,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.188809, g: 0.18307225, b: 0.3207547, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -7668,7 +7668,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: P
+  m_text: '||'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ca8f694c3a41e274eb3947079be7d8d3, type: 2}
   m_sharedMaterial: {fileID: 4276275292596890903, guid: ca8f694c3a41e274eb3947079be7d8d3,
@@ -8294,6 +8294,7 @@ MonoBehaviour:
   _masterVolume: {fileID: 1641404510}
   _musicVolume: {fileID: 146506049}
   _effectsVolume: {fileID: 1602530234}
+  _menuPanel: {fileID: 2079203167}
 --- !u!1 &1460050706
 GameObject:
   m_ObjectHideFlags: 0
