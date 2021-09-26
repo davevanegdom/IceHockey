@@ -2103,7 +2103,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1124539073}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &352125054
 AudioSource:
@@ -2476,6 +2476,49 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &405529088
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 405529089}
+  - component: {fileID: 405529090}
+  m_Layer: 0
+  m_Name: ParticleManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &405529089
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 405529088}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1124539073}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &405529090
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 405529088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5cefc6487a770b40a3af0df349c0b19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &408895587
 GameObject:
   m_ObjectHideFlags: 0
@@ -2664,7 +2707,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 3.500104
+  orthographic size: 3.991354
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -4045,7 +4088,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &704685665
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4155,7 +4198,7 @@ MonoBehaviour:
   m_renderer: {fileID: 704685668}
   m_maskType: 0
   _SortingLayerID: 0
-  _SortingOrder: 8
+  _SortingOrder: 10
 --- !u!222 &704685667
 CanvasRenderer:
   m_ObjectHideFlags: 2
@@ -4202,7 +4245,7 @@ MeshRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 8
+  m_SortingOrder: 10
 --- !u!1 &709188737
 GameObject:
   m_ObjectHideFlags: 0
@@ -6420,9 +6463,11 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 1327828808}
   - {fileID: 2122933369}
   - {fileID: 352125053}
   - {fileID: 1253381423}
+  - {fileID: 405529089}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6890,7 +6935,6 @@ GameObject:
   - component: {fileID: 1253381423}
   - component: {fileID: 1253381425}
   - component: {fileID: 1253381424}
-  - component: {fileID: 1253381426}
   m_Layer: 0
   m_Name: WaveManager
   m_TagString: WaveManager
@@ -6908,10 +6952,9 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 1327828808}
+  m_Children: []
   m_Father: {fileID: 1124539073}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1253381424
 MonoBehaviour:
@@ -6948,49 +6991,105 @@ MonoBehaviour:
   Waves:
   - IsCheckpointWave: 0
     NumberOfEnemies:
-      AmountOfEnemies: 10
+      AmountOfEnemies: 5
+    TargetTime:
+      WaveTime: 10
+  - IsCheckpointWave: 0
+    NumberOfEnemies:
+      AmountOfEnemies: 7
     TargetTime:
       WaveTime: 10
   - IsCheckpointWave: 1
     NumberOfEnemies:
-      AmountOfEnemies: 15
+      AmountOfEnemies: 10
     TargetTime:
       WaveTime: 15
   - IsCheckpointWave: 0
     NumberOfEnemies:
-      AmountOfEnemies: 20
+      AmountOfEnemies: 12
+    TargetTime:
+      WaveTime: 15
+  - IsCheckpointWave: 0
+    NumberOfEnemies:
+      AmountOfEnemies: 15
+    TargetTime:
+      WaveTime: 20
+  - IsCheckpointWave: 1
+    NumberOfEnemies:
+      AmountOfEnemies: 17
     TargetTime:
       WaveTime: 20
   - IsCheckpointWave: 0
     NumberOfEnemies:
-      AmountOfEnemies: 16
+      AmountOfEnemies: 20
     TargetTime:
       WaveTime: 25
   - IsCheckpointWave: 0
     NumberOfEnemies:
-      AmountOfEnemies: 20
+      AmountOfEnemies: 23
+    TargetTime:
+      WaveTime: 25
+  - IsCheckpointWave: 1
+    NumberOfEnemies:
+      AmountOfEnemies: 25
     TargetTime:
       WaveTime: 30
+  - IsCheckpointWave: 0
+    NumberOfEnemies:
+      AmountOfEnemies: 27
+    TargetTime:
+      WaveTime: 30
+  - IsCheckpointWave: 0
+    NumberOfEnemies:
+      AmountOfEnemies: 30
+    TargetTime:
+      WaveTime: 35
+  - IsCheckpointWave: 1
+    NumberOfEnemies:
+      AmountOfEnemies: 32
+    TargetTime:
+      WaveTime: 35
+  - IsCheckpointWave: 0
+    NumberOfEnemies:
+      AmountOfEnemies: 35
+    TargetTime:
+      WaveTime: 40
+  - IsCheckpointWave: 0
+    NumberOfEnemies:
+      AmountOfEnemies: 37
+    TargetTime:
+      WaveTime: 40
+  - IsCheckpointWave: 1
+    NumberOfEnemies:
+      AmountOfEnemies: 40
+    TargetTime:
+      WaveTime: 45
+  - IsCheckpointWave: 0
+    NumberOfEnemies:
+      AmountOfEnemies: 42
+    TargetTime:
+      WaveTime: 45
+  - IsCheckpointWave: 0
+    NumberOfEnemies:
+      AmountOfEnemies: 45
+    TargetTime:
+      WaveTime: 50
+  - IsCheckpointWave: 1
+    NumberOfEnemies:
+      AmountOfEnemies: 47
+    TargetTime:
+      WaveTime: 50
+  - IsCheckpointWave: 0
+    NumberOfEnemies:
+      AmountOfEnemies: 50
+    TargetTime:
+      WaveTime: 60
+  - IsCheckpointWave: 1
+    NumberOfEnemies:
+      AmountOfEnemies: 100
+    TargetTime:
+      WaveTime: 300
   _waveInterval: 5
---- !u!95 &1253381426
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1253381422}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 965e8c6c476acee4f8ca1b077e31765a, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &1263063518
 GameObject:
   m_ObjectHideFlags: 0
@@ -7290,7 +7389,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 704685665}
-  m_Father: {fileID: 1253381423}
+  m_Father: {fileID: 1124539073}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -8873,7 +8972,7 @@ MonoBehaviour:
   m_Follow: {fileID: 0}
   m_Lens:
     FieldOfView: 60
-    OrthographicSize: 3.500104
+    OrthographicSize: 3.991354
     NearClipPlane: 0.3
     FarClipPlane: 1000
     Dutch: 0
@@ -12197,7 +12296,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1124539073}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2122933370
 MonoBehaviour:

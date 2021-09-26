@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using TMPro;
 
 public class cs_WaveController : MonoBehaviour
 {
@@ -40,11 +41,7 @@ public class cs_WaveController : MonoBehaviour
         _enemiesSpawned = 0;
         _isCheckpointWave = _isCheckpoint;
 
-        GetComponent<Animator>().SetTrigger("PlayAnim");
-        if (_isCheckpointWave)
-        {
-            _waveCheckpointIndicator.SetActive(true);
-        }
+        StartCoroutine(WaveAnnouncement());
 
         s_ResetUI?.Invoke(_waveIndex + 1, 0, 0, 0);
         SpawnEnemy();
@@ -124,6 +121,19 @@ public class cs_WaveController : MonoBehaviour
         StopAllCoroutines();
     }
 
+    public IEnumerator WaveAnnouncement()
+    {
+        _waveIndicator.GetComponent<TextMeshPro>().text = "WAVE " + (_waveIndex + 1);
+        _waveIndicator.SetActive(true);
+        if (_isCheckpointWave)
+        {
+            _waveCheckpointIndicator.SetActive(true);
+        }
+        yield return new WaitForSeconds(2f);
+        _waveIndicator.SetActive(false);
+        _waveCheckpointIndicator.SetActive(false);
+        Debug.Log("Showwwwww");
+    }
     private void OnEnable()
     {
         cs_WaveManager.s_SpawnWave += SpawnEnemies;

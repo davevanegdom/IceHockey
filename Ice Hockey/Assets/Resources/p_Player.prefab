@@ -137,6 +137,8 @@ MonoBehaviour:
   PlayerLives: 5
   _playerDeath: {fileID: 8300000, guid: a84380a4ce5568b4c8ac28a83127212d, type: 3}
   _playerHit: {fileID: 8300000, guid: 58a3181a13b9fae4c94ddf5415ddeb73, type: 3}
+  _iceParticle: {fileID: 8936225841884210028, guid: 5468a34aff088534a8beea711b58edfc,
+    type: 3}
   _defaultMoveSpeed: 7
   MaxMoveSpeed: 10
   _minMoveSpeed: 10

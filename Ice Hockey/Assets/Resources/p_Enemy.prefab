@@ -207,6 +207,8 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 4457917f884d21641818cdc7d0129b93, type: 3}
   - {fileID: 21300000, guid: fed26a9595360734193da2d0bddbcf77, type: 3}
   _enemyHealth: 30
+  _bloodParticle: {fileID: 3741148662631177852, guid: e061d8aa0beba6249bb9ca0602a4031c,
+    type: 3}
   _canShoot: 1
   _moveSpeed: 10
   _turnRate: 25

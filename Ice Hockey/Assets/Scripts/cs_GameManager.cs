@@ -54,7 +54,7 @@ public class cs_GameManager : MonoBehaviour
     private void GameOver(GameObject _player)
     {
         Debug.Log("GameOver");
-        StartCoroutine(EnableDisablePlayer(_player, false, 1f));
+        StartCoroutine(EnableDisablePlayer(_player, false, 0f));
         _player.transform.position = Vector2.zero;
         StartCoroutine(EnableDisablePlayer(_player, true, 3f));
     }

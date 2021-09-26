@@ -13,6 +13,7 @@ public class cs_PlayerController : MonoBehaviour
     public int PlayerLives;
     [SerializeField] private AudioClip _playerDeath;
     [SerializeField] private AudioClip _playerHit;
+    [SerializeField] private GameObject _iceParticle;
 
     #region Movement
     [SerializeField] private float _defaultMoveSpeed;
@@ -56,6 +57,7 @@ public class cs_PlayerController : MonoBehaviour
     public static event Action<AudioClip> s_PlayerEffects;
     public static event Action<int> s_TakeDamage;
     public static event Action<float> s_ShakeCamera;
+    public static event Action<Vector2, GameObject> s_ParticleEffect;
     #endregion
 
     // Start is called before the first frame update
@@ -320,6 +322,15 @@ public class cs_PlayerController : MonoBehaviour
         }
 
         _canDash = true;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.tag == "ArenaColliders")
+        {
+            s_ParticleEffect?.Invoke(transform.position, _iceParticle);
+            s_ShakeCamera?.Invoke(0.1f);
+        }
     }
 
     private void OnEnable()

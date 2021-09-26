@@ -13,6 +13,7 @@ public class cs_Enemy : MonoBehaviour
     private bool _enteredArena;
 
     [SerializeField] private float _enemyHealth;
+    [SerializeField] private GameObject _bloodParticle;
 
     #region Movement & Shooting
     private bool _shootAbility;
@@ -39,6 +40,7 @@ public class cs_Enemy : MonoBehaviour
     #region Actions
     public static event Action s_EnemyDied;
     public static event Action<int> s_HitPlayer;
+    public static event Action<Vector2, GameObject> s_BloodParticle;
     #endregion 
 
 
@@ -101,6 +103,8 @@ public class cs_Enemy : MonoBehaviour
 
     private void TakeDamage(float _damage)
     {
+        s_BloodParticle?.Invoke(transform.position, _bloodParticle);
+
         if(_enemyHealth - _damage > 0)
         {
             _enemyHealth -= _damage;
