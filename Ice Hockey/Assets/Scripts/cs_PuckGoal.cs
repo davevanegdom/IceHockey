@@ -9,10 +9,12 @@ public class cs_PuckGoal : MonoBehaviour
     [SerializeField] private GameObject _staticPuckPrefab;
     public int CollectedPucks = 0;
     [SerializeField] private int _maxCollectablePucks;
+    [SerializeField] private AudioClip _pickUpSound;
 
 
     public static event Action<int, int> s_SetCollectedPucks;
     public static event Action<int> s_PlayerCollectPucks;
+    public static event Action<AudioClip> s_GoalPickupAudio;
 
     // Start is called before the first frame update
     void Start()
@@ -63,7 +65,7 @@ public class cs_PuckGoal : MonoBehaviour
     private void PlayerPickUpPucks(int _collectedPucks)
     {
         s_PlayerCollectPucks?.Invoke(_collectedPucks);
-        
+        s_GoalPickupAudio?.Invoke(_pickUpSound);
 
         foreach (Transform _staticPuck in transform)
         {

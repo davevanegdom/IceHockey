@@ -15,6 +15,8 @@ public class cs_WaveController : MonoBehaviour
     private int _enemiesKilled;
     private int _enemiesSpawned;
     private bool _isCheckpointWave;
+    [SerializeField] private GameObject _waveIndicator;
+    [SerializeField] private GameObject _waveCheckpointIndicator;
 
     public static event Action<int> s_WaveEnded;
     public static event Action<float> s_SetWaveProgress;
@@ -24,6 +26,8 @@ public class cs_WaveController : MonoBehaviour
     private void Start()
     {
         _waveManager = GetComponent<cs_WaveManager>();
+        _waveIndicator.SetActive(false);
+        _waveCheckpointIndicator.SetActive(false);
     }
 
     public void SpawnEnemies(int _newWaveIndex, int _enemiesCount, int _newWaveTime, bool _isCheckpoint)
@@ -35,6 +39,12 @@ public class cs_WaveController : MonoBehaviour
         _enemiesKilled = 0;
         _enemiesSpawned = 0;
         _isCheckpointWave = _isCheckpoint;
+
+        GetComponent<Animator>().SetTrigger("PlayAnim");
+        if (_isCheckpointWave)
+        {
+            _waveCheckpointIndicator.SetActive(true);
+        }
 
         s_ResetUI?.Invoke(_waveIndex + 1, 0, 0, 0);
         SpawnEnemy();
