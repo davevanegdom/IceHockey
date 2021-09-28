@@ -17,9 +17,6 @@ public class cs_UIManager : MonoBehaviour
     private int _savedLiveIndex;
     [SerializeField] private TMPro.TextMeshProUGUI _playerPuckCount;
 
-    [SerializeField] private TMPro.TextMeshPro _leftGoalText;
-    [SerializeField] private TMPro.TextMeshPro _rightGoalText;
-
     [SerializeField] private Slider _masterVolume;
     [SerializeField] private Slider _musicVolume;
     [SerializeField] private Slider _effectsVolume;
@@ -46,6 +43,7 @@ public class cs_UIManager : MonoBehaviour
 
     public void LoadScene(int _buildIndex)
     {
+        Time.timeScale = 1;
         SceneManager.LoadScene(_buildIndex);
     }
 

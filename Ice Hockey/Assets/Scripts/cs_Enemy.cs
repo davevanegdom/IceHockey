@@ -101,7 +101,7 @@ public class cs_Enemy : MonoBehaviour
         _followPos = _offSet;
     }
 
-    private void TakeDamage(float _damage)
+    public void TakeDamage(float _damage)
     {
         s_BloodParticle?.Invoke(transform.position, _bloodParticle);
 
@@ -231,7 +231,6 @@ public class cs_Enemy : MonoBehaviour
             {
                 float _puckDamage = _rbPuckVelocity;
                 TakeDamage(_puckDamage);
-                Debug.Log(_puckDamage);
             }
         }
     }

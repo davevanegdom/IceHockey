@@ -26,13 +26,18 @@ public class cs_AudioManager : MonoBehaviour
 
     private void PlayAudioClip(AudioClip _audioClip)
     {
-        _audioSourceEffects.clip = _audioClip;
-        _audioSourceEffects.Play();
-    }
-
-    private void StopAudioClip(AudioClip _audioClip)
-    {
-
+        if (!_audioSourceEffects.isPlaying)
+        {
+            _audioSourceEffects.clip = _audioClip;
+            _audioSourceEffects.Play();
+        }
+        else
+        {
+            AudioSource _tempSource = gameObject.AddComponent<AudioSource>();
+            _tempSource.clip = _audioClip;
+            _tempSource.Play();
+            Destroy(_tempSource, _tempSource.clip.length);
+        }
     }
 
     private void SetVolumes(float _masterVolume, float _musicVolume, float _effectsVolume)
@@ -48,6 +53,7 @@ public class cs_AudioManager : MonoBehaviour
         cs_PlayerController.s_PlayerEffects += PlayAudioClip;
         cs_UIManager.s_SetVolumes += SetVolumes;
         cs_PuckGoal.s_GoalPickupAudio += PlayAudioClip;
+        cs_WaveController.s_StartSoundEffect += PlayAudioClip;
     }
     private void OnDisable()
     {
@@ -56,5 +62,6 @@ public class cs_AudioManager : MonoBehaviour
         cs_PlayerController.s_PlayerEffects -= PlayAudioClip;
         cs_UIManager.s_SetVolumes -= SetVolumes;
         cs_PuckGoal.s_GoalPickupAudio -= PlayAudioClip;
+        cs_WaveController.s_StartSoundEffect -= PlayAudioClip;
     }
 }

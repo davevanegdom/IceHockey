@@ -95,6 +95,9 @@ public class cs_GameManager : MonoBehaviour
         else
         {
             s_StartWaves?.Invoke(_savedWave);
+            _playerController.PuckCount = _savedPucks;
+            _playerController.PlayerLives = _savedLives;
+            _playerController.DisplayPucks(1);
             s_ResetUI?.Invoke(_savedWave + 1, 0f, _savedPucks, _savedLives);
         }
     }

@@ -126,7 +126,7 @@ public class cs_PlayerController : MonoBehaviour
         {
             PlayerHit(PlayerLives);
         }
-        
+
         #endregion
     }
 
@@ -171,12 +171,13 @@ public class cs_PlayerController : MonoBehaviour
         switch (_selectedDashSystem)
         {
             case DashSystem.DashInLookDirection:
-                //rbPlayer.velocity = transform.right * (rbPlayer.velocity.magnitude * dashMultiplier);
+                //Dot product
                 _rbPlayer.velocity -= _rbPlayer.velocity * (1 - _retainMomemtumPercentage);
                 _rbPlayer.AddForce(transform.right * (_dashMultiplier * (1 - (_rbPlayer.velocity.magnitude / MaxMoveSpeed))));
                 break;
                 
             case DashSystem.DashInInputDirection:
+                //Dot product
                 _rbPlayer.velocity -= _rbPlayer.velocity * (1 - _retainMomemtumPercentage);
                 Vector2 _dashDir = new Vector2(_moveDir.x, _moveDir.y).normalized;
                 _rbPlayer.AddForce(_dashDir * (_dashMultiplier * (1 - (_rbPlayer.velocity.magnitude / MaxMoveSpeed))));
@@ -251,7 +252,7 @@ public class cs_PlayerController : MonoBehaviour
         }
     }
 
-    private void DisplayPucks(int _pucks)
+    public void DisplayPucks(int _pucks)
     {
         
         if (_puckSpawn.childCount > 0 && _displayedStaticPucks.Count > 0)
@@ -330,6 +331,11 @@ public class cs_PlayerController : MonoBehaviour
         {
             s_ParticleEffect?.Invoke(transform.position, _iceParticle);
             s_ShakeCamera?.Invoke(0.1f);
+        }
+
+        if(collision.gameObject.tag == "Enemy" && _rbPlayer.velocity.magnitude > 4f && !_canDash)
+        {
+            collision.gameObject.GetComponent<cs_Enemy>().TakeDamage(_rbPlayer.velocity.magnitude / 5);
         }
     }
 

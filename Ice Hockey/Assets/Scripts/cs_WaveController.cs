@@ -18,11 +18,13 @@ public class cs_WaveController : MonoBehaviour
     private bool _isCheckpointWave;
     [SerializeField] private GameObject _waveIndicator;
     [SerializeField] private GameObject _waveCheckpointIndicator;
+    [SerializeField] private AudioClip _startSoundEffect;
 
     public static event Action<int> s_WaveEnded;
     public static event Action<float> s_SetWaveProgress;
     public static event Action<int> s_CheckpointWave;
     public static event Action<int, float, int, int> s_ResetUI;
+    public static event Action<AudioClip> s_StartSoundEffect;
 
     private void Start()
     {
@@ -43,6 +45,7 @@ public class cs_WaveController : MonoBehaviour
 
         StartCoroutine(WaveAnnouncement());
 
+        s_StartSoundEffect(_startSoundEffect);
         s_ResetUI?.Invoke(_waveIndex + 1, 0, 0, 0);
         SpawnEnemy();
         StartCoroutine(WaveTimer(_waveTime));
@@ -132,7 +135,6 @@ public class cs_WaveController : MonoBehaviour
         yield return new WaitForSeconds(2f);
         _waveIndicator.SetActive(false);
         _waveCheckpointIndicator.SetActive(false);
-        Debug.Log("Showwwwww");
     }
     private void OnEnable()
     {

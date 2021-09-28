@@ -94,7 +94,7 @@ public class cs_PuckGoal : MonoBehaviour
     
     private void OnTriggerEnter2D(Collider2D _collision)
     {
-        if (_collision.gameObject.tag == "Player")
+        if (_collision.gameObject.tag == "Player" && CollectedPucks > 0)
         {
             PlayerPickUpPucks(CollectedPucks);
         }

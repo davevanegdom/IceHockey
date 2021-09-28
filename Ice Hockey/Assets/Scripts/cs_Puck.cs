@@ -80,6 +80,23 @@ public class cs_Puck : MonoBehaviour
         {
             PickUpPuck();
         }
+
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Puck")
+        {
+            Rigidbody2D _rbHitPuck = collision.gameObject.GetComponent<Rigidbody2D>();
+            if (_rbHitPuck.velocity.magnitude > 3)
+            {
+                //Multiply magnitude of other puck
+                Vector2 _dir = -(((Vector2)transform.position - collision.contacts[0].point) * 10).normalized ;
+                _rbHitPuck.AddForce(_dir * 3, ForceMode2D.Impulse);
+
+                Debug.Log("Accelerated");
+            }
+        }
     }
 
     private void OnEnable()
