@@ -257,13 +257,20 @@ public class cs_Enemy : MonoBehaviour
         }
     }
 
+    private void RemoveEnemy()
+    {
+        Destroy(gameObject);
+    }
+
     private void OnEnable()
     {
         cs_PlayerController.s_PlayerDied += PlayerDied;
+        cs_GameManager.s_Reset += RemoveEnemy;
     }
 
     private void OnDisable()
     {
         cs_PlayerController.s_PlayerDied -= PlayerDied;
+        cs_GameManager.s_Reset -= RemoveEnemy;
     }
 }

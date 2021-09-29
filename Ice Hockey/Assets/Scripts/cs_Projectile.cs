@@ -36,4 +36,21 @@ public class cs_Projectile : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    private void RemoveProjectile()
+    {
+        Destroy(gameObject);
+    }
+
+    private void OnEnable()
+    {
+        cs_GameManager.s_Reset += RemoveProjectile;
+    }
+
+    private void OnDisable()
+    {
+        cs_GameManager.s_Reset -= RemoveProjectile;
+    }
+
+
 }

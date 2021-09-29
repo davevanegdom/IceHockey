@@ -21,6 +21,7 @@ public class cs_GameManager : MonoBehaviour
     public static event Action<int, float, int, int> s_ResetUI;
     public static event Action s_SetupCamera;
     public static event Action s_ClearGoals;
+    public static event Action s_Reset;
 
     private void Awake()
     {
@@ -48,7 +49,9 @@ public class cs_GameManager : MonoBehaviour
     private void CheckPoint(int _waveIndex)
     {
         _savedWave = _waveIndex;
-        _savedLives = GameObject.FindGameObjectWithTag("Player").GetComponent<cs_PlayerController>().PlayerLives;
+        _savedLives = _playerController.PlayerLives;
+        _playerController._canSuperMode = true;
+        _playerController.AbilityCover(2, false);
     }
 
     private void GameOver(GameObject _player)
@@ -75,28 +78,16 @@ public class cs_GameManager : MonoBehaviour
         if (!_state)
         {
             s_ClearGoals?.Invoke();
-            GameObject[] _enemies = GameObject.FindGameObjectsWithTag("Enemy");
-            foreach (GameObject _enemy in _enemies)
-            {
-                Destroy(_enemy);
-            }
-            GameObject[] _pucks = GameObject.FindGameObjectsWithTag("Puck");
-
-            foreach (GameObject _puck in _pucks)
-            {
-                Destroy(_puck);
-            }
-            GameObject[] _projectiles = GameObject.FindGameObjectsWithTag("Projectile");
-            foreach (GameObject _projectile in _projectiles)
-            {
-                Destroy(_projectile);
-            }
+            s_Reset?.Invoke();
         }
         else
         {
             s_StartWaves?.Invoke(_savedWave);
             _playerController.PuckCount = _savedPucks;
             _playerController.PlayerLives = _savedLives;
+            _playerController._canSuperMode = true;
+            _playerController._canDash = true;
+            _playerController._canPickUp = true;
             _playerController.DisplayPucks(1);
             s_ResetUI?.Invoke(_savedWave + 1, 0f, _savedPucks, _savedLives);
         }

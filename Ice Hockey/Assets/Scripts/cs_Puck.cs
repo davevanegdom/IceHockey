@@ -67,7 +67,7 @@ public class cs_Puck : MonoBehaviour
 
     }
 
-    private void PickUpPuck()
+    public void PickUpPuck()
     {
         s_PuckPickedUp?.Invoke(1);
         s_pickUpSound?.Invoke(_puckPickUpSound);
@@ -83,6 +83,11 @@ public class cs_Puck : MonoBehaviour
 
     }
 
+    private void RemovePuck()
+    {
+        Destroy(gameObject);
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Puck")
@@ -93,19 +98,17 @@ public class cs_Puck : MonoBehaviour
                 //Multiply magnitude of other puck
                 Vector2 _dir = -(((Vector2)transform.position - collision.contacts[0].point) * 10).normalized ;
                 _rbHitPuck.AddForce(_dir * 3, ForceMode2D.Impulse);
-
-                Debug.Log("Accelerated");
             }
         }
     }
 
     private void OnEnable()
     {
-
+        cs_GameManager.s_Reset += RemovePuck;
     }
 
     private void OnDisable()
     {
-
+        cs_GameManager.s_Reset -= RemovePuck;
     }
 }

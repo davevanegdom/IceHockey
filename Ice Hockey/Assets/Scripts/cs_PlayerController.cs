@@ -25,7 +25,7 @@ public class cs_PlayerController : MonoBehaviour
     [SerializeField] private AudioClip _dashSound;
     [SerializeField] [Range(0, 1)] float _retainMomemtumPercentage;
     [SerializeField] [Range(0, 5)] float _dashCooldown;
-    private bool _canDash = true;
+    public bool _canDash = true;
     public enum DashSystem {DashInLookDirection, DashInInputDirection}
     [SerializeField] private DashSystem _selectedDashSystem = DashSystem.DashInLookDirection;
     #endregion
@@ -49,6 +49,23 @@ public class cs_PlayerController : MonoBehaviour
     private List<Vector2> _shootDirections;
     #endregion
 
+    #region Super Mode
+    public bool _canSuperMode = true;
+    [SerializeField] private float _superModeDuration;
+    [SerializeField] private float _speedMultiplier;
+    [SerializeField] private float _shootingMultiplier;
+    private bool _isInvincible = false;
+    [SerializeField] private float _playerSizeIncrease;
+    private GameObject _superEffect;
+    [SerializeField] private ParticleSystem _superModeParticle;
+    #endregion
+
+    #region Pick Up Ability
+    [SerializeField] private float _pickUpCoolDown;
+    public bool _canPickUp = true;
+    [SerializeField] private float _pickUpRange;
+    #endregion
+
     #region Actions
     public static event Action<Vector2, float> s_ShootPuck;
     public static event Action<AudioClip> s_ShootEffects;
@@ -58,6 +75,8 @@ public class cs_PlayerController : MonoBehaviour
     public static event Action<int> s_TakeDamage;
     public static event Action<float> s_ShakeCamera;
     public static event Action<Vector2, GameObject> s_ParticleEffect;
+    public static Action<int, bool> s_AbilityCover;
+    public void AbilityCover(int _identifier, bool _visibility) => s_AbilityCover?.Invoke(_identifier, _visibility);
     #endregion
 
     // Start is called before the first frame update
@@ -67,7 +86,9 @@ public class cs_PlayerController : MonoBehaviour
         _rbPlayer = GetComponent<Rigidbody2D>();
         _srPlayer = GetComponent<SpriteRenderer>();
         _mCamera = Camera.main;
-
+        _superEffect = GameObject.FindGameObjectWithTag("SuperMode");
+        _superEffect.SetActive(false);
+        _superModeParticle.Stop();
         DisplayPucks(1);
     }
 
@@ -116,6 +137,18 @@ public class cs_PlayerController : MonoBehaviour
         }
         #endregion
 
+        #region Abilities
+        if(Input.GetKeyDown(KeyCode.E) && _canPickUp)
+        {
+            PickUpAbility();
+        }
+
+        if(Input.GetKeyDown(KeyCode.F) && _canSuperMode)
+        {
+            SuperAbility();
+        }
+        #endregion
+
         #region Other
         LookAtMouse(Input.mousePosition);
         DeceleratePlayer();
@@ -134,17 +167,15 @@ public class cs_PlayerController : MonoBehaviour
     {
         float speed = _rbPlayer.velocity.magnitude;
 
-        if (_rbPlayer.velocity.magnitude < MaxMoveSpeed)
+        if (_rbPlayer.velocity.magnitude < MaxMoveSpeed * _speedMultiplier)
         {
             Vector2 deltaMove = _moveDir.normalized;
             Debug.DrawLine(transform.position, new Vector2(transform.position.x + deltaMove.x, transform.position.y + deltaMove.y), Color.blue);
 
-            if (_rbPlayer.velocity.magnitude < _minMoveSpeed)
-            {
-                _rbPlayer.AddForce(deltaMove * (1 - (speed / MaxMoveSpeed)) * (_defaultMoveSpeed * (100 * _rbPlayer.mass) * Time.deltaTime));
-                Vector2 _debugPos = new Vector2(transform.position.x + (_rbPlayer.velocity.x * speed), transform.position.y + (_rbPlayer.velocity.y * speed));
-                Debug.DrawLine(transform.position, _debugPos, Color.red);
-            }
+            _rbPlayer.AddForce(deltaMove * (1 - (speed / (MaxMoveSpeed * _speedMultiplier))) * (_defaultMoveSpeed * (100 * _rbPlayer.mass) * Time.deltaTime));
+            Vector2 _debugPos = new Vector2(transform.position.x + (_rbPlayer.velocity.x * speed), transform.position.y + (_rbPlayer.velocity.y * speed));
+            Debug.DrawLine(transform.position, _debugPos, Color.red);
+            
         }
     }
 
@@ -185,8 +216,9 @@ public class cs_PlayerController : MonoBehaviour
         }
 
         s_PlayerEffects?.Invoke(_dashSound);
+        s_AbilityCover?.Invoke(0, true);
         _canDash = false;
-        StartCoroutine(CooldownTimer(_dashCooldown));
+        StartCoroutine(CooldownTimer(_dashCooldown, 0));
     }
 
     private void PlayerShootPuck()
@@ -212,7 +244,7 @@ public class cs_PlayerController : MonoBehaviour
         foreach (Vector2 _shootDirection in _shootDirections)
         {
             GameObject _puck = Instantiate(_prefabDynamicPuck, _puckSpawn.position, Quaternion.identity);
-            _puck.GetComponent<cs_Puck>().ShootPuck(_shootDirection, (_shootForce * _chargeMultiplier));
+            _puck.GetComponent<cs_Puck>().ShootPuck(_shootDirection, (_shootForce * _chargeMultiplier * _shootingMultiplier));
         }
 
         PuckCount -=  _displayedStaticPucks.Count;
@@ -235,21 +267,27 @@ public class cs_PlayerController : MonoBehaviour
 
     private void PlayerHit(int _damage)
     {
-        s_ShakeCamera?.Invoke(0.3f);
-        int _remainingLives = PlayerLives - _damage;
-        if (_remainingLives > 0)
+        if (!_isInvincible)
         {
-            PlayerLives -= _damage;
-            s_PlayerEffects?.Invoke(_playerHit);
-            s_TakeDamage?.Invoke(PlayerLives);
+            s_ShakeCamera?.Invoke(0.3f);
+            int _remainingLives = PlayerLives - _damage;
+            if (_remainingLives > 0)
+            {
+                PlayerLives -= _damage;
+                s_PlayerEffects?.Invoke(_playerHit);
+                s_TakeDamage?.Invoke(PlayerLives);
+            }
+            else
+            {
+                PlayerLives = 0;
+                s_TakeDamage?.Invoke(PlayerLives);
+                s_PlayerEffects?.Invoke(_playerDeath);
+                s_PlayerDied?.Invoke(gameObject);
+                ExitSuperMode();
+                StopAllCoroutines();
+            }
         }
-        else
-        {
-            PlayerLives = 0;
-            s_TakeDamage?.Invoke(PlayerLives);
-            s_PlayerEffects?.Invoke(_playerDeath);
-            s_PlayerDied?.Invoke(gameObject);
-        }
+        
     }
 
     public void DisplayPucks(int _pucks)
@@ -293,6 +331,38 @@ public class cs_PlayerController : MonoBehaviour
         DisplayPucks(1);
     }
 
+    private void PickUpAbility()
+    {
+        Collider2D[] _hitPucks = Physics2D.OverlapCircleAll(transform.position, _pickUpRange);
+        foreach (Collider2D _hitPuck in _hitPucks)
+        {
+            if(_hitPuck.gameObject.tag == "Puck")
+            {
+                _hitPuck.gameObject.GetComponent<cs_Puck>().PickUpPuck();
+            }
+        }
+
+        s_AbilityCover(1, true);
+        _canPickUp = false;
+        StartCoroutine(CooldownTimer(_pickUpCoolDown, 1));
+    }
+
+    private void SuperAbility()
+    {
+        StartCoroutine(SuperMode());
+    }
+
+    private void ExitSuperMode()
+    {
+        _superModeParticle.Stop();
+        _superEffect.SetActive(false);
+        _speedMultiplier = 1f;
+        _shootingMultiplier = 1f;
+        _isInvincible = false;
+        transform.localScale = Vector2.one;
+        s_AbilityCover?.Invoke(2, true);
+    }
+
     public IEnumerator ChargeShot()
     {
         s_ShootEffects?.Invoke(_chargeSound);
@@ -312,7 +382,7 @@ public class cs_PlayerController : MonoBehaviour
         }
     }
 
-    private IEnumerator CooldownTimer(float _cooldownTime)
+    private IEnumerator CooldownTimer(float _cooldownTime, int _identifier)
     {
         float _time = _cooldownTime;
 
@@ -322,7 +392,32 @@ public class cs_PlayerController : MonoBehaviour
             yield return null;
         }
 
-        _canDash = true;
+        switch (_identifier)
+        {
+            case 0:
+                _canDash = true;
+                s_AbilityCover?.Invoke(0, false);
+                break;
+            case 1:
+                _canPickUp = true;
+                s_AbilityCover?.Invoke(1, false);
+                break;
+        }
+    }
+
+    private IEnumerator SuperMode()
+    {
+        _superModeParticle.Play();
+        _superEffect.SetActive(true);
+        _speedMultiplier = 1.5f;
+        _shootingMultiplier = 1.2f;
+        _isInvincible = true;
+        transform.localScale = Vector2.one * _playerSizeIncrease;
+        _canSuperMode = false;
+        s_AbilityCover?.Invoke(2, true);
+        yield return new WaitForSeconds(_superModeDuration);
+
+        ExitSuperMode();
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

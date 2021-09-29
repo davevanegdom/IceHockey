@@ -23,7 +23,18 @@ public class cs_UIManager : MonoBehaviour
 
     [SerializeField] private GameObject _menuPanel;
 
+    [SerializeField] private GameObject _dashCover;
+    [SerializeField] private GameObject _pickUpCover;
+    [SerializeField] private GameObject _superCover;
+
     public static event Action<float, float, float> s_SetVolumes;
+
+    private void Start()
+    {
+        _dashCover.SetActive(false);
+        _pickUpCover.SetActive(false);
+        _superCover.SetActive(false);
+    }
 
     private void UpdateWaveIndex(int _waveIndex)
     {
@@ -108,6 +119,29 @@ public class cs_UIManager : MonoBehaviour
         UpdatePlayerLives(_playerLives);
     }
 
+    private void AbilityCovers(int _identifier, bool _visibilty)
+    {
+        switch (_identifier)
+        {
+            case 0:
+                _dashCover.SetActive(_visibilty);
+                break;
+            case 1:
+                _pickUpCover.SetActive(_visibilty);
+                break;
+            case 2:
+                _superCover.SetActive(_visibilty);
+                break;
+        }
+    }
+
+    private void ResetCovers()
+    {
+        AbilityCovers(0, false);
+        AbilityCovers(1, false);
+        AbilityCovers(2, false);
+    }
+
     private void OnEnable()
     {
         cs_WaveManager.s_SetWaveIndex += UpdateWaveIndex;
@@ -116,6 +150,8 @@ public class cs_UIManager : MonoBehaviour
         cs_PlayerController.s_TakeDamage += UpdatePlayerLives;
         cs_GameManager.s_ResetUI += ResetUI;
         cs_WaveController.s_ResetUI += ResetUI;
+        cs_PlayerController.s_AbilityCover += AbilityCovers;
+        cs_GameManager.s_Reset += ResetCovers;
     }
 
     private void OnDisable()
@@ -126,6 +162,8 @@ public class cs_UIManager : MonoBehaviour
         cs_PlayerController.s_TakeDamage -= UpdatePlayerLives;
         cs_GameManager.s_ResetUI -= ResetUI;
         cs_WaveController.s_ResetUI -= ResetUI;
+        cs_PlayerController.s_AbilityCover -= AbilityCovers;
+        cs_GameManager.s_Reset -= ResetCovers;
     }
 
     private void Update()

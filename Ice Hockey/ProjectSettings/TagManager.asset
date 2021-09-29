@@ -12,6 +12,7 @@ TagManager:
   - ArenaColliders
   - Enemy
   - Projectile
+  - SuperMode
   layers:
   - Default
   - TransparentFX
@@ -26,7 +27,7 @@ TagManager:
   - Camera
   - Arena
   - Enemy
-  - 
+  - Post-Processing
   - 
   - 
   - 

@@ -301,6 +301,14 @@ MonoBehaviour:
   _chargeTime: 1.5
   _chargeMultiplier: 0.75
   _puckSpawn: {fileID: 5898106266752193938}
+  _superModeDuration: 20
+  _speedMultiplier: 1
+  _shootingMultiplier: 1
+  _playerSizeIncrease: 1.5
+  _superModeParticle: {fileID: 6951020468979487530, guid: a707f1ece94632f449029668f3cea7de,
+    type: 3}
+  _pickUpCoolDown: 20
+  _pickUpRange: 2
 --- !u!1 &5898106266752193939
 GameObject:
   m_ObjectHideFlags: 0
