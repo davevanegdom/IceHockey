@@ -16,6 +16,8 @@ public class cs_UIManager : MonoBehaviour
     [SerializeField] private GameObject _playerHeartIcon;
     private int _savedLiveIndex;
     [SerializeField] private TMPro.TextMeshProUGUI _playerPuckCount;
+    [SerializeField] private Animation _puckCountAnimation;
+    [SerializeField] private Animation _heartAnimation;
 
     [SerializeField] private Slider _masterVolume;
     [SerializeField] private Slider _musicVolume;
@@ -50,6 +52,7 @@ public class cs_UIManager : MonoBehaviour
     private void UpdatePlayerPuckCount(int _puckCount)
     {
         _playerPuckCount.text = _puckCount.ToString();
+        _puckCountAnimation.Play();
     }
 
     public void LoadScene(int _buildIndex)
@@ -104,6 +107,8 @@ public class cs_UIManager : MonoBehaviour
             GameObject _heartIcon = Instantiate(_playerHeartIcon, _heartsPanelParent);
             _heartIcon.GetComponent<RectTransform>().anchoredPosition = new Vector2(_startX + _interval * i, 0);
         }
+
+        _heartAnimation.Play();
     }
 
     private void UpdateTimer(string _time)

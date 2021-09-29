@@ -85,7 +85,6 @@ public class cs_WaveController : MonoBehaviour
         }
     }
 
-    //Get a point on an edge collider
     Vector2 enemySpawnPosition()
     {
         RaycastHit2D _hit = Physics2D.Raycast(Vector2.zero, new Vector2((UnityEngine.Random.Range(-1f, 1f)), (UnityEngine.Random.Range(-1f, 1f))), 100f, SpawnLayer);
@@ -126,13 +125,14 @@ public class cs_WaveController : MonoBehaviour
 
     public IEnumerator WaveAnnouncement()
     {
+        
         _waveIndicator.GetComponent<TextMeshPro>().text = "WAVE " + (_waveIndex + 1);
         _waveIndicator.SetActive(true);
         if (_isCheckpointWave)
         {
             _waveCheckpointIndicator.SetActive(true);
         }
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(5f);
         _waveIndicator.SetActive(false);
         _waveCheckpointIndicator.SetActive(false);
     }

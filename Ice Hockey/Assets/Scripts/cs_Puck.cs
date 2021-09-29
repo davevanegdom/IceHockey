@@ -27,6 +27,7 @@ public class cs_Puck : MonoBehaviour
         _pulseEffect = GetComponentInChildren<cs_PulseEffect>();
         _puckCollider = GetComponent<CircleCollider2D>();
         _puckTrigger.enabled = false;
+        _puckCollider.enabled = false;
 
         _player = GameObject.FindGameObjectWithTag("Player");
     }
@@ -37,6 +38,7 @@ public class cs_Puck : MonoBehaviour
         if (!_puckTrigger.enabled && Vector2.Distance(_player.transform.position, transform.position) > _pickUpRadius)
         {
             _puckTrigger.enabled = true;
+            _puckCollider.enabled = true;
         }
 
 
@@ -64,6 +66,8 @@ public class cs_Puck : MonoBehaviour
     {
         Vector2 _shootDir = _shootDirection * _shootForce;
         _rbPuck.AddForce(_shootDir, ForceMode2D.Impulse);
+        
+        
 
     }
 

@@ -5,7 +5,7 @@ using System;
 
 public class cs_PlayerController : MonoBehaviour
 {
-
+    [Header("General")]
     private cs_GameManager _gameManager;
     private Rigidbody2D _rbPlayer;
     private SpriteRenderer _srPlayer;
@@ -14,8 +14,11 @@ public class cs_PlayerController : MonoBehaviour
     [SerializeField] private AudioClip _playerDeath;
     [SerializeField] private AudioClip _playerHit;
     [SerializeField] private GameObject _iceParticle;
+    [SerializeField] private TrailRenderer _rightTrail;
+    [SerializeField] private TrailRenderer _leftTrail;
 
     #region Movement
+    [Header("Movement")]
     [SerializeField] private float _defaultMoveSpeed;
     public float MaxMoveSpeed;
     [SerializeField] private float _minMoveSpeed;
@@ -30,9 +33,12 @@ public class cs_PlayerController : MonoBehaviour
     [SerializeField] private DashSystem _selectedDashSystem = DashSystem.DashInLookDirection;
     #endregion
 
+    
     #region Shooting
+    [Header("Shooting")]
     [SerializeField] private float _defaultFireRate;
     public int PuckCount;
+    [SerializeField] private GameObject _chargeBar;
 
     [SerializeField] private AudioClip _shootSound;
     [SerializeField] private AudioClip _chargeSound;
@@ -50,6 +56,7 @@ public class cs_PlayerController : MonoBehaviour
     #endregion
 
     #region Super Mode
+    [Header("Super Mode")]
     public bool _canSuperMode = true;
     [SerializeField] private float _superModeDuration;
     [SerializeField] private float _speedMultiplier;
@@ -61,6 +68,7 @@ public class cs_PlayerController : MonoBehaviour
     #endregion
 
     #region Pick Up Ability
+    [Header("Pick up ability")]
     [SerializeField] private float _pickUpCoolDown;
     public bool _canPickUp = true;
     [SerializeField] private float _pickUpRange;
@@ -89,6 +97,7 @@ public class cs_PlayerController : MonoBehaviour
         _superEffect = GameObject.FindGameObjectWithTag("SuperMode");
         _superEffect.SetActive(false);
         _superModeParticle.Stop();
+        _chargeBar.SetActive(false);
         DisplayPucks(1);
     }
 
@@ -132,6 +141,7 @@ public class cs_PlayerController : MonoBehaviour
         if(Input.GetMouseButtonUp(1) && PuckCount > 0)
         {
             _chargeMultiplier = 0.75f;
+            _chargeBar.SetActive(false);
             StopCoroutine(_co);
             DisplayPucks(1);
         }
@@ -167,15 +177,17 @@ public class cs_PlayerController : MonoBehaviour
     {
         float speed = _rbPlayer.velocity.magnitude;
 
-        if (_rbPlayer.velocity.magnitude < MaxMoveSpeed * _speedMultiplier)
+        _rightTrail.time = speed / MaxMoveSpeed;
+        _leftTrail.time = speed / MaxMoveSpeed;
+
+        if (speed < MaxMoveSpeed * _speedMultiplier)
         {
             Vector2 deltaMove = _moveDir.normalized;
             Debug.DrawLine(transform.position, new Vector2(transform.position.x + deltaMove.x, transform.position.y + deltaMove.y), Color.blue);
 
             _rbPlayer.AddForce(deltaMove * (1 - (speed / (MaxMoveSpeed * _speedMultiplier))) * (_defaultMoveSpeed * (100 * _rbPlayer.mass) * Time.deltaTime));
             Vector2 _debugPos = new Vector2(transform.position.x + (_rbPlayer.velocity.x * speed), transform.position.y + (_rbPlayer.velocity.y * speed));
-            Debug.DrawLine(transform.position, _debugPos, Color.red);
-            
+            Debug.DrawLine(transform.position, _debugPos, Color.red); 
         }
     }
 
@@ -228,8 +240,8 @@ public class cs_PlayerController : MonoBehaviour
         {
             if(_displayedStaticPucks.Count > 1)
             {
-                Vector2 _puckDir = (_staticPuck.transform.position - transform.position);
-                Vector2 _shootDir = new Vector2(transform.position.x + _puckDir.x, transform.position.y + _puckDir.y);
+                //Vector2 _puckDir = (_staticPuck.transform.position - transform.position);
+                Vector2 _shootDir = (_staticPuck.transform.position - transform.position).normalized;
                 _shootDirections.Add(_shootDir);
             }
             else
@@ -246,6 +258,7 @@ public class cs_PlayerController : MonoBehaviour
             GameObject _puck = Instantiate(_prefabDynamicPuck, _puckSpawn.position, Quaternion.identity);
             _puck.GetComponent<cs_Puck>().ShootPuck(_shootDirection, (_shootForce * _chargeMultiplier * _shootingMultiplier));
         }
+
 
         PuckCount -=  _displayedStaticPucks.Count;
         s_ShootEffects?.Invoke(_shootSound);
@@ -366,14 +379,20 @@ public class cs_PlayerController : MonoBehaviour
     public IEnumerator ChargeShot()
     {
         s_ShootEffects?.Invoke(_chargeSound);
+        _chargeBar.SetActive(true);
+        SpriteRenderer _chargeBarSprite = _chargeBar.GetComponent<SpriteRenderer>();
         float _time = 0;
 
         while(_time < _chargeTime)
         {
             _time += Time.deltaTime;
             _chargeMultiplier = Mathf.Lerp(0.75f, 1.25f, _time / _chargeTime);
+            _chargeBar.transform.localScale = new Vector3(_chargeBar.transform.localScale.x, _chargeMultiplier - 0.75f, _chargeBar.transform.localScale.z);
+            _chargeBarSprite.color = Color.Lerp(Color.green, Color.red, _time / _chargeTime);
             yield return null;
         }
+
+        _chargeBar.SetActive(false);
 
         if(PuckCount > 2)
         {
@@ -419,6 +438,8 @@ public class cs_PlayerController : MonoBehaviour
 
         ExitSuperMode();
     }
+
+
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
