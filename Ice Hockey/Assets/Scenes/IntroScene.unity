@@ -1064,9 +1064,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'With 3 seconds left in the finals you score an own goal which costs you
+  m_text: With 3 seconds left in the finals you score an own goal which costs you
     the game. Your supporters are furious. All players scatter as the supporters
-    storm the rink. You are alone and outnumbered... and they are coming for you. '
+    storm the rink. You are alone and outnumbered... and they are coming for you.
+    Kill them.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 1ffdb2dace2b5a1469a6876054a4dc87, type: 2}
   m_sharedMaterial: {fileID: -2418748648978407451, guid: 1ffdb2dace2b5a1469a6876054a4dc87,

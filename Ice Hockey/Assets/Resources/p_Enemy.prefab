@@ -209,6 +209,8 @@ MonoBehaviour:
   _enemyHealth: 30
   _bloodParticle: {fileID: 3741148662631177852, guid: e061d8aa0beba6249bb9ca0602a4031c,
     type: 3}
+  _hitEffect: {fileID: 8300000, guid: 3c7f528f9c6490f42ac21094fc9a00e9, type: 3}
+  _KillEffect: {fileID: 8300000, guid: 4c965dcd65d551649b725c0820555ded, type: 3}
   _canShoot: 1
   _moveSpeed: 10
   _turnRate: 25

@@ -14,6 +14,8 @@ public class cs_Enemy : MonoBehaviour
 
     [SerializeField] private float _enemyHealth;
     [SerializeField] private GameObject _bloodParticle;
+    [SerializeField] private AudioClip _hitEffect;
+    [SerializeField] private AudioClip _KillEffect;
 
     #region Movement & Shooting
     private bool _shootAbility;
@@ -41,6 +43,7 @@ public class cs_Enemy : MonoBehaviour
     public static event Action s_EnemyDied;
     public static event Action<int> s_HitPlayer;
     public static event Action<Vector2, GameObject> s_BloodParticle;
+    public static event Action<AudioClip> s_HitEffect;
     #endregion 
 
 
@@ -107,6 +110,7 @@ public class cs_Enemy : MonoBehaviour
 
         if(_enemyHealth - _damage > 0)
         {
+            s_HitEffect?.Invoke(_hitEffect);
             _enemyHealth -= _damage;
             if(_enemyHealth < 5)
             {
@@ -115,6 +119,7 @@ public class cs_Enemy : MonoBehaviour
         }
         else
         {
+            s_HitEffect?.Invoke(_KillEffect);
             s_EnemyDied?.Invoke();
             Destroy(gameObject);
         }

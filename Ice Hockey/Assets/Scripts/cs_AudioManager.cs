@@ -54,6 +54,7 @@ public class cs_AudioManager : MonoBehaviour
         cs_UIManager.s_SetVolumes += SetVolumes;
         cs_PuckGoal.s_GoalPickupAudio += PlayAudioClip;
         cs_WaveController.s_StartSoundEffect += PlayAudioClip;
+        cs_Enemy.s_HitEffect += PlayAudioClip;
     }
     private void OnDisable()
     {
@@ -63,5 +64,6 @@ public class cs_AudioManager : MonoBehaviour
         cs_UIManager.s_SetVolumes -= SetVolumes;
         cs_PuckGoal.s_GoalPickupAudio -= PlayAudioClip;
         cs_WaveController.s_StartSoundEffect -= PlayAudioClip;
+        cs_Enemy.s_HitEffect -= PlayAudioClip;
     }
 }
