@@ -295,8 +295,9 @@ MonoBehaviour:
   PuckCount: 10
   _chargeBar: {fileID: 6422119095345634490}
   _shootSound: {fileID: 8300000, guid: 5ae67a14e6d080c4880e3c14756cab07, type: 3}
+  _noPuckSound: {fileID: 8300000, guid: fffc18f15a5de3d43b9991fc1c34c899, type: 3}
   _chargeSound: {fileID: 8300000, guid: 9665a43d2c811714d8b719aea2c327b7, type: 3}
-  _superShotSound: {fileID: 0}
+  _superShotSound: {fileID: 8300000, guid: 7d6a94a413e45044c8fd42cc0d5a3b1e, type: 3}
   _prefabDynamicPuck: {fileID: 5165462278121099713, guid: 2c42fc71ce9625b4fa244fd4527c7a54,
     type: 3}
   _prefabStaticPuck: {fileID: 6101373807279073598, guid: 47002485a31f36c48852af4c42dced83,
@@ -310,9 +311,11 @@ MonoBehaviour:
   _speedMultiplier: 1
   _shootingMultiplier: 1
   _playerSizeIncrease: 1.5
+  _superSound: {fileID: 8300000, guid: 10df0e5425de34b42976cdf5eac50cc2, type: 3}
   _superModeParticle: {fileID: 6951020468979487530, guid: a707f1ece94632f449029668f3cea7de,
     type: 3}
   _pickUpCoolDown: 20
+  _pickUpAbilitySound: {fileID: 8300000, guid: 63656e697494d574c862863c02f2d058, type: 3}
   _canPickUp: 1
   _pickUpRange: 2
 --- !u!1 &5898106266752193939

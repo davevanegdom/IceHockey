@@ -34,6 +34,7 @@ public class cs_AudioManager : MonoBehaviour
         else
         {
             AudioSource _tempSource = gameObject.AddComponent<AudioSource>();
+            _tempSource.volume = _audioSourceEffects.volume;
             _tempSource.clip = _audioClip;
             _tempSource.Play();
             Destroy(_tempSource, _tempSource.clip.length);
@@ -49,7 +50,7 @@ public class cs_AudioManager : MonoBehaviour
     private void OnEnable()
     {
         cs_Puck.s_pickUpSound += PlayAudioClip;
-        cs_PlayerController.s_ShootEffects += PlayAudioClip;
+        cs_PlayerController.s_SoundEffects += PlayAudioClip;
         cs_PlayerController.s_PlayerEffects += PlayAudioClip;
         cs_UIManager.s_SetVolumes += SetVolumes;
         cs_PuckGoal.s_GoalPickupAudio += PlayAudioClip;
@@ -59,7 +60,7 @@ public class cs_AudioManager : MonoBehaviour
     private void OnDisable()
     {
         cs_Puck.s_pickUpSound -= PlayAudioClip;
-        cs_PlayerController.s_ShootEffects -= PlayAudioClip;
+        cs_PlayerController.s_SoundEffects -= PlayAudioClip;
         cs_PlayerController.s_PlayerEffects -= PlayAudioClip;
         cs_UIManager.s_SetVolumes -= SetVolumes;
         cs_PuckGoal.s_GoalPickupAudio -= PlayAudioClip;

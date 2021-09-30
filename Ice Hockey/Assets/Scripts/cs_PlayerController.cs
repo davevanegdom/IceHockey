@@ -33,7 +33,6 @@ public class cs_PlayerController : MonoBehaviour
     [SerializeField] private DashSystem _selectedDashSystem = DashSystem.DashInLookDirection;
     #endregion
 
-    
     #region Shooting
     [Header("Shooting")]
     [SerializeField] private float _defaultFireRate;
@@ -41,6 +40,7 @@ public class cs_PlayerController : MonoBehaviour
     [SerializeField] private GameObject _chargeBar;
 
     [SerializeField] private AudioClip _shootSound;
+    [SerializeField] private AudioClip _noPuckSound;
     [SerializeField] private AudioClip _chargeSound;
     [SerializeField] private AudioClip _superShotSound;
 
@@ -63,6 +63,7 @@ public class cs_PlayerController : MonoBehaviour
     [SerializeField] private float _shootingMultiplier;
     private bool _isInvincible = false;
     [SerializeField] private float _playerSizeIncrease;
+    [SerializeField] private AudioClip _superSound;
     private GameObject _superEffect;
     [SerializeField] private ParticleSystem _superModeParticle;
     #endregion
@@ -70,13 +71,14 @@ public class cs_PlayerController : MonoBehaviour
     #region Pick Up Ability
     [Header("Pick up ability")]
     [SerializeField] private float _pickUpCoolDown;
+    [SerializeField] private AudioClip _pickUpAbilitySound;
     public bool _canPickUp = true;
     [SerializeField] private float _pickUpRange;
     #endregion
 
     #region Actions
     public static event Action<Vector2, float> s_ShootPuck;
-    public static event Action<AudioClip> s_ShootEffects;
+    public static event Action<AudioClip> s_SoundEffects;
     public static event Action<GameObject> s_PlayerDied;
     public static event Action<int> s_UpdatePlayerPucks;
     public static event Action<AudioClip> s_PlayerEffects;
@@ -132,6 +134,10 @@ public class cs_PlayerController : MonoBehaviour
         {
             PlayerShootPuck();
         }
+        else if(Input.GetMouseButtonDown(0) && PuckCount == 0)
+        {
+            s_SoundEffects?.Invoke(_noPuckSound);
+        }
 
         if(Input.GetMouseButtonDown(1) && PuckCount > 0)
         {
@@ -145,6 +151,7 @@ public class cs_PlayerController : MonoBehaviour
             StopCoroutine(_co);
             DisplayPucks(1);
         }
+        
         #endregion
 
         #region Abilities
@@ -243,10 +250,12 @@ public class cs_PlayerController : MonoBehaviour
                 //Vector2 _puckDir = (_staticPuck.transform.position - transform.position);
                 Vector2 _shootDir = (_staticPuck.transform.position - transform.position).normalized;
                 _shootDirections.Add(_shootDir);
+                s_SoundEffects?.Invoke(_superShotSound);
             }
             else
             {
                 _shootDirections.Add(transform.right);
+                s_SoundEffects?.Invoke(_shootSound);
             }
             Destroy(_staticPuck);
         }
@@ -261,7 +270,7 @@ public class cs_PlayerController : MonoBehaviour
 
 
         PuckCount -=  _displayedStaticPucks.Count;
-        s_ShootEffects?.Invoke(_shootSound);
+        
         s_ShakeCamera?.Invoke(0.25f);
         s_UpdatePlayerPucks?.Invoke(PuckCount);
 
@@ -355,6 +364,7 @@ public class cs_PlayerController : MonoBehaviour
             }
         }
 
+        s_SoundEffects?.Invoke(_pickUpAbilitySound);
         s_AbilityCover(1, true);
         _canPickUp = false;
         StartCoroutine(CooldownTimer(_pickUpCoolDown, 1));
@@ -378,7 +388,7 @@ public class cs_PlayerController : MonoBehaviour
 
     public IEnumerator ChargeShot()
     {
-        s_ShootEffects?.Invoke(_chargeSound);
+        s_SoundEffects?.Invoke(_chargeSound);
         _chargeBar.SetActive(true);
         SpriteRenderer _chargeBarSprite = _chargeBar.GetComponent<SpriteRenderer>();
         float _time = 0;
@@ -426,6 +436,7 @@ public class cs_PlayerController : MonoBehaviour
 
     private IEnumerator SuperMode()
     {
+        s_SoundEffects?.Invoke(_superSound);
         _superModeParticle.Play();
         _superEffect.SetActive(true);
         _speedMultiplier = 1.5f;
